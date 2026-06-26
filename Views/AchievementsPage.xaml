@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Cali.Views.AchievementsPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Bg}">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="18,52,22,12">
+            <Button Grid.Column="0" Text="&#x2039;" Clicked="OnBack" FontFamily="BarlowBold" FontSize="20"
+                    SemanticProperties.Description="Back"
+                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource TextPrimary}"
+                    WidthRequest="44" HeightRequest="44" CornerRadius="22" Padding="0" VerticalOptions="Center" />
+            <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                <Label Text="Achievements" FontFamily="BarlowCondensedBold" FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                <Label Text="{Binding Subtitle}" FontFamily="BarlowSemiBold" FontSize="13" TextColor="{StaticResource TextMuted}" />
+            </VerticalStackLayout>
+            <Label Grid.Column="2" Text="{Binding Pct}" FontFamily="BarlowCondensedBold" FontSize="30"
+                   TextColor="{StaticResource Accent}" VerticalOptions="Center" />
+        </Grid>
+
+        <ProgressBar Grid.Row="1" Progress="{Binding PctFraction}" ProgressColor="{StaticResource Accent}"
+                     BackgroundColor="{StaticResource Surface2}" Margin="22,4,22,8" />
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Padding="22,8,22,34" Spacing="4" BindableLayout.ItemsSource="{Binding Groups}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Spacing="11" Margin="0,8,0,8">
+                            <Label Text="{Binding Title}" FontFamily="BarlowBold" FontSize="13" CharacterSpacing="2"
+                                   TextColor="{StaticResource TextFaint}" />
+                            <VerticalStackLayout Spacing="11" BindableLayout.ItemsSource="{Binding Items}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource Surface}"
+                                                Stroke="{Binding BorderColor}" StrokeThickness="1" Padding="14">
+                                            <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="14">
+                                                <Border Grid.Column="0" WidthRequest="52" HeightRequest="52" StrokeShape="RoundRectangle 14"
+                                                        BackgroundColor="{Binding IconBg}" Stroke="Transparent" VerticalOptions="Center">
+                                                    <Label Text="{Binding Emoji}" FontSize="26" Opacity="{Binding IconOpacity}"
+                                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                                </Border>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                                    <Label Text="{Binding Name}" FontFamily="BarlowCondensedBold" FontSize="17" TextColor="{Binding NameColor}" />
+                                                    <Label Text="{Binding Desc}" FontFamily="Barlow" FontSize="12.5" LineHeight="1.3" TextColor="{StaticResource TextMuted}" />
+                                                    <VerticalStackLayout IsVisible="{Binding ShowProgress}" Spacing="4" Margin="0,7,0,0">
+                                                        <ProgressBar Progress="{Binding ProgFraction}" ProgressColor="{StaticResource TextFaint}"
+                                                                     BackgroundColor="{StaticResource Surface2}" />
+                                                        <Label Text="{Binding ProgText}" FontFamily="BarlowSemiBold" FontSize="11" TextColor="{StaticResource TextFaint}" />
+                                                    </VerticalStackLayout>
+                                                </VerticalStackLayout>
+                                                <Border Grid.Column="2" StrokeShape="RoundRectangle 9" BackgroundColor="{Binding TagBg}"
+                                                        Stroke="Transparent" Padding="9,5" VerticalOptions="Center">
+                                                    <Label Text="{Binding Tag}" FontFamily="BarlowBold" FontSize="11" TextColor="{Binding TagText}" />
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

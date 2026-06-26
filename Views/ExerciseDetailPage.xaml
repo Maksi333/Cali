@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:c="clr-namespace:Cali.Controls"
+             x:Class="Cali.Views.ExerciseDetailPage"
+             x:Name="Root"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Bg}">
+
+    <ContentPage.Resources>
+        <Style x:Key="Eyebrow" TargetType="Label">
+            <Setter Property="FontFamily" Value="BarlowBold" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="CharacterSpacing" Value="2" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
+                <!-- Exercise media (branded placeholder until real illustrations ship) -->
+                <c:StripedPlaceholder HeightRequest="240" Label="{Binding Name}" />
+
+                <VerticalStackLayout Padding="22,20,22,40" Spacing="16">
+                    <!-- Name + difficulty badge -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding Name}" FontFamily="BarlowCondensedBold" FontSize="30"
+                               TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                        <Border Grid.Column="1" StrokeShape="RoundRectangle 8" BackgroundColor="Transparent"
+                                Stroke="{Binding DifficultyColor}" StrokeThickness="1" Padding="10,4" VerticalOptions="Center">
+                            <Label Text="{Binding DifficultyText}" TextColor="{Binding DifficultyColor}"
+                                   FontFamily="BarlowSemiBold" FontSize="12" />
+                        </Border>
+                    </Grid>
+
+                    <!-- Muscle chips -->
+                    <HorizontalStackLayout Spacing="8">
+                        <Border StrokeShape="RoundRectangle 9" BackgroundColor="{StaticResource AccentTint}" Stroke="Transparent" Padding="11,5">
+                            <Label Text="{Binding PrimaryMuscle}" FontFamily="BarlowSemiBold" FontSize="12" TextColor="{StaticResource Accent}" />
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 9" BackgroundColor="{StaticResource Surface2}" Stroke="Transparent" Padding="11,5">
+                            <Label Text="{Binding SecondaryEquip}" FontFamily="BarlowSemiBold" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <Label Text="{Binding Description}" FontFamily="Barlow" FontSize="15" LineHeight="1.5"
+                           TextColor="{StaticResource TextMuted}" />
+
+                    <!-- Form cues -->
+                    <Label Text="FORM CUES" Style="{StaticResource Eyebrow}" TextColor="{StaticResource Accent}" Margin="0,6,0,0" />
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Cues}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding}" FontFamily="Barlow" FontSize="14" LineHeight="1.45"
+                                       TextColor="{StaticResource TextPrimary}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Progressions (signature feature) -->
+                    <Label Text="PROGRESSIONS" Style="{StaticResource Eyebrow}" TextColor="{StaticResource Accent}" Margin="0,6,0,0" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Border Grid.Column="0" IsVisible="{Binding HasEasier}" StrokeShape="RoundRectangle 14"
+                                BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="&#x2190; EASIER" Style="{StaticResource Eyebrow}" TextColor="{StaticResource Success}" />
+                                <Label Text="{Binding EasierName}" FontFamily="BarlowCondensedBold" FontSize="18" TextColor="{StaticResource TextPrimary}" />
+                            </VerticalStackLayout>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoEasierCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                        <Border Grid.Column="1" IsVisible="{Binding HasHarder}" StrokeShape="RoundRectangle 14"
+                                BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1" Padding="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="HARDER &#x2192;" Style="{StaticResource Eyebrow}" TextColor="{StaticResource Accent}" HorizontalOptions="End" />
+                                <Label Text="{Binding HarderName}" FontFamily="BarlowCondensedBold" FontSize="18" TextColor="{StaticResource TextPrimary}" HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoHarderCommand}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
+
+                    <!-- Common mistakes -->
+                    <Label Text="COMMON MISTAKES" Style="{StaticResource Eyebrow}" TextColor="{StaticResource Accent}" Margin="0,6,0,0" />
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Mistakes}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding}" FontFamily="Barlow" FontSize="14" LineHeight="1.45"
+                                       TextColor="{StaticResource DangerX}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Back -->
+        <Button Text="&#x2715;" Clicked="OnBack" FontFamily="BarlowBold" FontSize="18"
+                SemanticProperties.Description="Back"
+                BackgroundColor="#CC15171C" TextColor="{StaticResource TextPrimary}"
+                WidthRequest="44" HeightRequest="44" CornerRadius="22" Padding="0"
+                HorizontalOptions="Start" VerticalOptions="Start" Margin="18,18,0,0" />
+    </Grid>
+</ContentPage>

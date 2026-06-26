@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Cali.ViewModels"
+             x:Class="Cali.Views.PlansPage"
+             x:Name="Root"
+             Title="Plans"
+             BackgroundColor="{StaticResource Bg}">
+
+    <ContentPage.Resources>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource Surface2}" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="Stroke" Value="Transparent" />
+            <Setter Property="Padding" Value="9,4" />
+        </Style>
+        <Style x:Key="ChipText" TargetType="Label">
+            <Setter Property="FontFamily" Value="BarlowSemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <VerticalStackLayout Grid.Row="0">
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto" Padding="22,16,22,12">
+                <Label Text="Plans" FontFamily="BarlowCondensedBold" FontSize="32"
+                       TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="+ New" Command="{Binding NewPlanCommand}"
+                        BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                        FontFamily="BarlowBold" FontSize="13" CornerRadius="10" HeightRequest="38" Padding="14,0" />
+            </Grid>
+
+            <!-- Segmented toggle -->
+            <Border Margin="22,0,22,16" Padding="4" StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="4">
+                    <Button Grid.Column="0" Text="Predefined" Command="{Binding ShowPredefinedCommand}"
+                            BackgroundColor="{Binding PredefinedBg}" TextColor="{Binding PredefinedText}"
+                            FontFamily="BarlowSemiBold" FontSize="14" CornerRadius="9" HeightRequest="42" />
+                    <Button Grid.Column="1" Text="My plans" Command="{Binding ShowMineCommand}"
+                            BackgroundColor="{Binding MineBg}" TextColor="{Binding MineText}"
+                            FontFamily="BarlowSemiBold" FontSize="14" CornerRadius="9" HeightRequest="42" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+
+        <!-- Plan cards -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Cards}" Margin="22,0,22,0"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:PlanCardViewModel">
+                    <Border StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource Surface}"
+                            Stroke="{StaticResource Line}" StrokeThickness="1" Margin="0,0,0,14" Padding="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.StartPlanCommand}"
+                                CommandParameter="{Binding}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="3,*">
+                            <BoxView Grid.Column="0" Color="{Binding AccentBar}" />
+                            <Grid Grid.Column="1" Padding="16,14" RowDefinitions="Auto,Auto">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                    <Label Text="{Binding Name}" FontFamily="BarlowCondensedBold" FontSize="22"
+                                           TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding BadgeText}" TextColor="{Binding BadgeColor}"
+                                           FontFamily="BarlowBold" FontSize="11" CharacterSpacing="1"
+                                           VerticalOptions="Center" />
+                                    <Button Grid.Column="2" Text="&#x22EF;" FontSize="18"
+                                            BackgroundColor="Transparent" TextColor="{StaticResource TextMuted}"
+                                            WidthRequest="32" HeightRequest="32" Padding="0"
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.OverflowCommand}"
+                                            CommandParameter="{Binding}" />
+                                </Grid>
+                                <!-- BUG-005: FlexLayout wraps tags to a second line instead of clipping long muscle lists. -->
+                                <FlexLayout Grid.Row="1" Wrap="Wrap" Direction="Row" AlignItems="Center" Margin="0,10,0,0">
+                                    <Border Style="{StaticResource Chip}" Margin="0,2,8,2">
+                                        <Label Text="{Binding DifficultyText}" Style="{StaticResource ChipText}"
+                                               TextColor="{Binding DifficultyColor}" />
+                                    </Border>
+                                    <Border Style="{StaticResource Chip}" Margin="0,2,8,2">
+                                        <Label Text="{Binding DurationText}" Style="{StaticResource ChipText}" />
+                                    </Border>
+                                    <Border Style="{StaticResource Chip}" Margin="0,2,0,2">
+                                        <Label Text="{Binding MusclesText}" Style="{StaticResource ChipText}"
+                                               LineBreakMode="TailTruncation" MaxLines="1" />
+                                    </Border>
+                                </FlexLayout>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Empty state (BUG-009) -->
+        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}" Margin="22,0"
+                             VerticalOptions="Center" HorizontalOptions="Center" Spacing="14" Padding="20,0">
+            <Border WidthRequest="76" HeightRequest="76" StrokeShape="RoundRectangle 22"
+                    BackgroundColor="{StaticResource AccentTint}" Stroke="Transparent" HorizontalOptions="Center">
+                <Label Text="&#x1F4CB;" FontSize="34" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Text="{Binding EmptyHeadline}" FontFamily="BarlowCondensedBold" FontSize="24"
+                   TextColor="{StaticResource TextPrimary}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding EmptySub}" FontFamily="Barlow" FontSize="14" LineHeight="1.4"
+                   TextColor="{StaticResource TextMuted}" HorizontalTextAlignment="Center" />
+            <Button Text="+ New plan" Command="{Binding NewPlanCommand}"
+                    BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                    FontFamily="BarlowBold" FontSize="15" CornerRadius="14" HeightRequest="52"
+                    Padding="28,0" HorizontalOptions="Center" Margin="0,6,0,0" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

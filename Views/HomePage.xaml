@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Cali.Views.HomePage"
+             Title="Home"
+             BackgroundColor="{StaticResource Bg}">
+
+    <ContentPage.Resources>
+        <Style x:Key="QuickStat" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+            <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+            <Setter Property="Stroke" Value="{StaticResource Line}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Padding" Value="12,14" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="22,20,22,30" Spacing="18">
+
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+                    <Label Text="{Binding Greeting}" FontFamily="Barlow" FontSize="14" TextColor="{StaticResource TextMuted}" />
+                    <Label Text="{Binding UserName, StringFormat='Let’s move, {0}'}" FontFamily="BarlowCondensedBold"
+                           FontSize="30" TextColor="{StaticResource TextPrimary}" />
+                </VerticalStackLayout>
+                <Border Grid.Column="1" WidthRequest="46" HeightRequest="46" StrokeShape="RoundRectangle 23"
+                        BackgroundColor="{StaticResource Surface2}" Stroke="{StaticResource Line}" StrokeThickness="1" VerticalOptions="Center"
+                        SemanticProperties.Description="Open profile" SemanticProperties.Hint="Opens your profile and settings">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenProfileCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label Text="{Binding Avatar}" FontFamily="BarlowBold" FontSize="15" TextColor="{StaticResource Accent}"
+                           HorizontalOptions="Center" VerticalOptions="Center" InputTransparent="True" />
+                </Border>
+            </Grid>
+
+            <!-- Streak card -->
+            <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Background="{StaticResource AccentGradient}" Padding="20,18">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="CURRENT STREAK" FontFamily="BarlowBold" FontSize="11" CharacterSpacing="2"
+                               TextColor="{StaticResource AccentOn}" />
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="{Binding CurrentStreak}" FontFamily="BarlowCondensedBold" FontSize="52"
+                                   TextColor="{StaticResource AccentOn}" />
+                            <Label Text="days" FontFamily="BarlowSemiBold" FontSize="18" TextColor="{StaticResource AccentOn}"
+                                   VerticalOptions="End" Margin="0,0,0,10" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="End" Spacing="2">
+                        <Label Text="&#x1F525;" FontSize="26" HorizontalOptions="End" />
+                        <Label Text="{Binding BestStreak, StringFormat='Best: {0}'}" FontFamily="BarlowSemiBold" FontSize="12"
+                               TextColor="{StaticResource AccentOn}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Today's plan -->
+            <Border IsVisible="{Binding HasPlan}" StrokeShape="RoundRectangle 20" BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource Line}" StrokeThickness="1" Padding="20,18">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="TODAY’S PLAN" FontFamily="BarlowBold" FontSize="11" CharacterSpacing="2" TextColor="{StaticResource Accent}" />
+                    <Label Text="{Binding PlanName}" FontFamily="BarlowCondensedBold" FontSize="28" TextColor="{StaticResource TextPrimary}" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Border StrokeShape="RoundRectangle 8" BackgroundColor="{StaticResource Surface2}" Stroke="Transparent" Padding="9,4">
+                            <Label Text="{Binding PlanMeta}" FontFamily="BarlowSemiBold" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                        </Border>
+                        <Border StrokeShape="RoundRectangle 8" BackgroundColor="{StaticResource Surface2}" Stroke="Transparent" Padding="9,4">
+                            <Label Text="{Binding PlanMuscles}" FontFamily="BarlowSemiBold" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                        </Border>
+                    </HorizontalStackLayout>
+                    <Button Text="▶  START WORKOUT" Command="{Binding StartTodayCommand}"
+                            BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                            FontFamily="BarlowBold" FontSize="15" HeightRequest="56" CornerRadius="15" Margin="0,4,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Quick stats -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                <Border Grid.Column="0" Style="{StaticResource QuickStat}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="{Binding WeekSessions}" FontFamily="BarlowCondensedBold" FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="THIS WEEK" FontFamily="BarlowSemiBold" FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource QuickStat}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="{Binding WeekTime}" FontFamily="BarlowCondensedBold" FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="TIME" FontFamily="BarlowSemiBold" FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource QuickStat}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="{Binding PrCount}" FontFamily="BarlowCondensedBold" FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="NEW PRS" FontFamily="BarlowSemiBold" FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

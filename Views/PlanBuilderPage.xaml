@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Cali.ViewModels"
+             x:Class="Cali.Views.PlanBuilderPage"
+             x:Name="Root"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Bg}">
+
+    <ContentPage.Resources>
+        <!-- Row-action buttons (move up/down, remove). 44pt tap target (BUG-011). -->
+        <Style x:Key="Stepper" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+            <Setter Property="TextColor" Value="{StaticResource Accent}" />
+            <Setter Property="FontFamily" Value="BarlowBold" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="WidthRequest" Value="44" />
+            <Setter Property="HeightRequest" Value="44" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <!-- Stat steppers (−/+). Fill their column so the value above stays fully readable (BUG-006). -->
+        <Style x:Key="StepperBtn" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{StaticResource Surface}" />
+            <Setter Property="TextColor" Value="{StaticResource Accent}" />
+            <Setter Property="FontFamily" Value="BarlowBold" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="HeightRequest" Value="40" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="18,16,18,12">
+            <Button Grid.Column="0" Text="Cancel" Command="{Binding CancelCommand}"
+                    BackgroundColor="Transparent" TextColor="{StaticResource TextMuted}"
+                    FontFamily="BarlowSemiBold" FontSize="15" Padding="6,0" />
+            <Label Grid.Column="1" Text="{Binding Title}" HorizontalOptions="Center" VerticalOptions="Center"
+                   FontFamily="BarlowSemiBold" FontSize="16" TextColor="{StaticResource TextPrimary}" />
+            <Button Grid.Column="2" Text="Save" Command="{Binding SaveCommand}"
+                    BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                    FontFamily="BarlowBold" FontSize="14" CornerRadius="10" HeightRequest="38" Padding="16,0" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="22,4,22,40" Spacing="14">
+                <Entry Text="{Binding PlanName}" Placeholder="Plan name"
+                       FontFamily="BarlowCondensedBold" FontSize="24" TextColor="{StaticResource TextPrimary}"
+                       PlaceholderColor="{StaticResource TextFaint}" BackgroundColor="Transparent" />
+                <Label Text="{Binding Summary}" FontFamily="Barlow" FontSize="13"
+                       TextColor="{StaticResource TextFaint}" />
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Rows}" Spacing="12">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:BuilderExerciseRow">
+                            <Border StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource Surface}"
+                                    Stroke="{StaticResource Line}" StrokeThickness="1" Padding="14">
+                                <VerticalStackLayout Spacing="12">
+                                    <!-- Row header -->
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="6">
+                                        <Label Grid.Column="0" Text="&#x2807;" FontSize="20"
+                                               TextColor="{StaticResource TextFaint}" VerticalOptions="Center"
+                                               AutomationProperties.IsInAccessibleTree="False" />
+                                        <Label Grid.Column="1" Text="{Binding Name}" FontFamily="BarlowSemiBold"
+                                               FontSize="16" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                                        <Button Grid.Column="2" Text="&#x2191;" Style="{StaticResource Stepper}"
+                                                SemanticProperties.Description="Move exercise up"
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.MoveUpCommand}"
+                                                CommandParameter="{Binding}" TextColor="{StaticResource TextMuted}" />
+                                        <Button Grid.Column="3" Text="&#x2193;" Style="{StaticResource Stepper}"
+                                                SemanticProperties.Description="Move exercise down"
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.MoveDownCommand}"
+                                                CommandParameter="{Binding}" TextColor="{StaticResource TextMuted}" />
+                                        <Button Grid.Column="4" Text="&#x2715;" Style="{StaticResource Stepper}"
+                                                SemanticProperties.Description="Remove exercise"
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.RemoveCommand}"
+                                                CommandParameter="{Binding}" TextColor="{StaticResource Danger}" />
+                                    </Grid>
+                                    <!-- Stat steppers (BUG-006): value sits ABOVE the −/+ row so it is always fully visible. -->
+                                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                                        <!-- Sets -->
+                                        <Border Grid.Column="0" StrokeShape="RoundRectangle 12" BackgroundColor="{StaticResource Surface2}"
+                                                Stroke="Transparent" Padding="8,10">
+                                            <VerticalStackLayout Spacing="8">
+                                                <Label Text="SETS" HorizontalOptions="Center" FontFamily="BarlowBold"
+                                                       FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                                                <Label Text="{Binding Sets}" HorizontalOptions="Center"
+                                                       FontFamily="BarlowCondensedBold" FontSize="24" TextColor="{StaticResource TextPrimary}" />
+                                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                    <Button Grid.Column="0" Text="&#x2212;" Style="{StaticResource StepperBtn}"
+                                                            SemanticProperties.Description="Decrease sets"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.DecSetsCommand}" CommandParameter="{Binding}" />
+                                                    <Button Grid.Column="1" Text="+" Style="{StaticResource StepperBtn}"
+                                                            SemanticProperties.Description="Increase sets"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.IncSetsCommand}" CommandParameter="{Binding}" />
+                                                </Grid>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                        <!-- Reps / Hold -->
+                                        <Border Grid.Column="1" StrokeShape="RoundRectangle 12" BackgroundColor="{StaticResource Surface2}"
+                                                Stroke="Transparent" Padding="8,10">
+                                            <VerticalStackLayout Spacing="8">
+                                                <Label Text="{Binding TargetLabel}" HorizontalOptions="Center" FontFamily="BarlowBold"
+                                                       FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                                                <Label Text="{Binding TargetValue}" HorizontalOptions="Center"
+                                                       FontFamily="BarlowCondensedBold" FontSize="24" TextColor="{StaticResource TextPrimary}" />
+                                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                    <Button Grid.Column="0" Text="&#x2212;" Style="{StaticResource StepperBtn}"
+                                                            SemanticProperties.Description="Decrease target"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.DecTargetCommand}" CommandParameter="{Binding}" />
+                                                    <Button Grid.Column="1" Text="+" Style="{StaticResource StepperBtn}"
+                                                            SemanticProperties.Description="Increase target"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.IncTargetCommand}" CommandParameter="{Binding}" />
+                                                </Grid>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                        <!-- Rest -->
+                                        <Border Grid.Column="2" StrokeShape="RoundRectangle 12" BackgroundColor="{StaticResource Surface2}"
+                                                Stroke="Transparent" Padding="8,10">
+                                            <VerticalStackLayout Spacing="8">
+                                                <Label Text="REST" HorizontalOptions="Center" FontFamily="BarlowBold"
+                                                       FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                                                <Label Text="{Binding RestSec, StringFormat='{0}s'}" HorizontalOptions="Center" LineBreakMode="NoWrap"
+                                                       FontFamily="BarlowCondensedBold" FontSize="24" TextColor="{StaticResource TextPrimary}" />
+                                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                    <Button Grid.Column="0" Text="&#x2212;" Style="{StaticResource StepperBtn}"
+                                                            SemanticProperties.Description="Decrease rest seconds"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.DecRestCommand}" CommandParameter="{Binding}" />
+                                                    <Button Grid.Column="1" Text="+" Style="{StaticResource StepperBtn}"
+                                                            SemanticProperties.Description="Increase rest seconds"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.IncRestCommand}" CommandParameter="{Binding}" />
+                                                </Grid>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Add exercise -->
+                <Border StrokeShape="RoundRectangle 14" BackgroundColor="Transparent"
+                        Stroke="{StaticResource Line}" StrokeThickness="1.5" StrokeDashArray="6,4" StrokeDashOffset="0" Padding="0">
+                    <Button Text="+ Add exercise" Command="{Binding AddExerciseCommand}"
+                            BackgroundColor="Transparent" TextColor="{StaticResource TextMuted}"
+                            FontFamily="BarlowSemiBold" FontSize="15" HeightRequest="54" />
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

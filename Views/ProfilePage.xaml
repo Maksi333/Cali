@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Cali.Views.ProfilePage"
+             Title="You"
+             BackgroundColor="{StaticResource Bg}">
+
+    <ContentPage.Resources>
+        <Style x:Key="ToggleRow" TargetType="Grid">
+            <Setter Property="ColumnDefinitions" Value="*,Auto" />
+            <Setter Property="Padding" Value="16,14" />
+        </Style>
+        <Style x:Key="ToggleLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="BarlowMedium" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="22,20,22,30" Spacing="16">
+            <Label Text="Profile" FontFamily="BarlowCondensedBold" FontSize="32" TextColor="{StaticResource TextPrimary}" />
+
+            <!-- Profile header (read-only) -->
+            <Border IsVisible="{Binding IsNotEditing}" StrokeShape="RoundRectangle 18" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1" Padding="18">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <Border WidthRequest="58" HeightRequest="58" StrokeShape="RoundRectangle 29" BackgroundColor="{StaticResource Accent}" Stroke="Transparent">
+                        <Label Text="{Binding Avatar}" FontFamily="BarlowBold" FontSize="20" TextColor="{StaticResource AccentOn}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="{Binding Name}" FontFamily="BarlowCondensedBold" FontSize="24" TextColor="{StaticResource TextPrimary}" />
+                        <Label Text="{Binding GoalLevel}" FontFamily="Barlow" FontSize="13" TextColor="{StaticResource TextMuted}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="2" Text="Edit" Command="{Binding BeginEditCommand}"
+                            BackgroundColor="Transparent" TextColor="{StaticResource Accent}"
+                            FontFamily="BarlowSemiBold" FontSize="14" VerticalOptions="Center" Padding="8,0"
+                            SemanticProperties.Description="Edit profile" />
+                </Grid>
+            </Border>
+
+            <!-- Edit profile panel (BUG-002) -->
+            <Border IsVisible="{Binding IsEditing}" StrokeShape="RoundRectangle 18" BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource Line}" StrokeThickness="1" Padding="18">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="EDIT PROFILE" FontFamily="BarlowSemiBold" FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+
+                    <Label Text="Name" FontFamily="Barlow" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                    <Entry Text="{Binding EditName}" Placeholder="Your name" TextColor="{StaticResource TextPrimary}"
+                           PlaceholderColor="{StaticResource TextFaint}" />
+
+                    <Label Text="Goal" FontFamily="Barlow" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                    <Picker ItemsSource="{Binding GoalOptions}" SelectedItem="{Binding EditGoal}" TextColor="{StaticResource TextPrimary}"
+                            TitleColor="{StaticResource TextFaint}" />
+
+                    <Label Text="Level" FontFamily="Barlow" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                    <Picker ItemsSource="{Binding LevelOptions}" SelectedItem="{Binding EditLevel}" TextColor="{StaticResource TextPrimary}"
+                            TitleColor="{StaticResource TextFaint}" />
+
+                    <Label Text="Bodyweight (kg)" FontFamily="Barlow" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                    <Entry Text="{Binding EditBodyweight}" Keyboard="Numeric" Placeholder="0" TextColor="{StaticResource TextPrimary}"
+                           PlaceholderColor="{StaticResource TextFaint}" />
+
+                    <Label Text="Max pull-ups" FontFamily="Barlow" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                    <Entry Text="{Binding EditMaxPullups}" Keyboard="Numeric" Placeholder="0" TextColor="{StaticResource TextPrimary}"
+                           PlaceholderColor="{StaticResource TextFaint}" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,4,0,0">
+                        <Button Grid.Column="0" Text="Cancel" Command="{Binding CancelEditCommand}"
+                                BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource TextPrimary}"
+                                FontFamily="BarlowSemiBold" FontSize="15" HeightRequest="48" CornerRadius="14"
+                                BorderColor="{StaticResource Line}" BorderWidth="1" />
+                        <Button Grid.Column="1" Text="Save" Command="{Binding SaveEditCommand}"
+                                BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                                FontFamily="BarlowBold" FontSize="15" HeightRequest="48" CornerRadius="14" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 2-up stats -->
+            <Grid IsVisible="{Binding IsNotEditing}" ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Border Grid.Column="0" StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1" Padding="16,16">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="BODYWEIGHT" FontFamily="BarlowSemiBold" FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                        <Label Text="{Binding Bodyweight}" FontFamily="BarlowCondensedBold" FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" StrokeShape="RoundRectangle 16" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1" Padding="16,16">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="MAX PULL-UPS" FontFamily="BarlowSemiBold" FontSize="10" CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+                        <Label Text="{Binding MaxPullups}" FontFamily="BarlowCondensedBold" FontSize="26" TextColor="{StaticResource TextPrimary}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Toggles -->
+            <Border StrokeShape="RoundRectangle 18" BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}" StrokeThickness="1" Padding="0">
+                <VerticalStackLayout>
+                    <Grid Style="{StaticResource ToggleRow}">
+                        <Label Text="Sound alerts" Style="{StaticResource ToggleLabel}" />
+                        <Switch Grid.Column="1" IsToggled="{Binding SoundAlerts}" OnColor="{StaticResource Accent}" ThumbColor="White" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="{StaticResource LineSoft}" />
+                    <Grid Style="{StaticResource ToggleRow}">
+                        <Label Text="Vibration / haptics" Style="{StaticResource ToggleLabel}" />
+                        <Switch Grid.Column="1" IsToggled="{Binding Haptics}" OnColor="{StaticResource Accent}" ThumbColor="White" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="{StaticResource LineSoft}" />
+                    <Grid Style="{StaticResource ToggleRow}">
+                        <Label Text="Auto-start rest timer" Style="{StaticResource ToggleLabel}" />
+                        <Switch Grid.Column="1" IsToggled="{Binding AutoStartRest}" OnColor="{StaticResource Accent}" ThumbColor="White" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="{StaticResource LineSoft}" />
+                    <!-- BUG-010: not yet wired to behaviour — disabled with a 'Coming soon' caption rather than a toggle that does nothing. -->
+                    <Grid Style="{StaticResource ToggleRow}">
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                            <Label Text="Auto-progression" Style="{StaticResource ToggleLabel}" />
+                            <Label Text="Coming soon" FontFamily="Barlow" FontSize="11" TextColor="{StaticResource TextFaint}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding AutoProgression}" IsEnabled="False" Opacity="0.4"
+                                OnColor="{StaticResource Accent}" ThumbColor="White" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="{StaticResource LineSoft}" />
+                    <Grid Style="{StaticResource ToggleRow}">
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                            <Label Text="Workout reminders" Style="{StaticResource ToggleLabel}" />
+                            <Label Text="Coming soon" FontFamily="Barlow" FontSize="11" TextColor="{StaticResource TextFaint}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding Reminders}" IsEnabled="False" Opacity="0.4"
+                                OnColor="{StaticResource Accent}" ThumbColor="White" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Backup -->
+            <Button Text="Export data backup" Command="{Binding ExportCommand}"
+                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource TextPrimary}"
+                    FontFamily="BarlowSemiBold" FontSize="15" HeightRequest="52" CornerRadius="14" BorderColor="{StaticResource Line}" BorderWidth="1" />
+            <Button Text="Import backup" Command="{Binding ImportCommand}"
+                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource TextPrimary}"
+                    FontFamily="BarlowSemiBold" FontSize="15" HeightRequest="52" CornerRadius="14" BorderColor="{StaticResource Line}" BorderWidth="1" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

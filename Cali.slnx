@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Cali.csproj" />
+  <Project Path="Cali.Core/Cali.Core.csproj" />
+  <Project Path="Cali.Tests/Cali.Tests.csproj" />
+</Solution>

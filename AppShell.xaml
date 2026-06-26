@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Cali.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:v="clr-namespace:Cali.Views"
+    Title="Cali"
+    FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <ShellContent Title="Home"      Icon="tab_home.png"      ContentTemplate="{DataTemplate v:HomePage}"      Route="home" />
+        <ShellContent Title="Plans"     Icon="tab_plans.png"     ContentTemplate="{DataTemplate v:PlansPage}"     Route="plans" />
+        <ShellContent Title="Exercises" Icon="tab_exercises.png" ContentTemplate="{DataTemplate v:ExercisesPage}" Route="exercises" />
+        <ShellContent Title="Progress"  Icon="tab_progress.png"  ContentTemplate="{DataTemplate v:ProgressPage}"  Route="progress" />
+        <ShellContent Title="You"       Icon="tab_you.png"       ContentTemplate="{DataTemplate v:ProfilePage}"   Route="you" />
+    </TabBar>
+
+</Shell>

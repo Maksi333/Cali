@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Minimal base styles for Phase 1. Per-screen control styles are added in later phases. -->
+
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{StaticResource Bg}" />
+        <Setter Property="Shell.NavBarIsVisible" Value="False" />
+    </Style>
+
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="FontFamily" Value="Barlow" />
+    </Style>
+
+    <Style TargetType="Shell" ApplyToDerivedTypes="True">
+        <Setter Property="Shell.BackgroundColor" Value="{StaticResource Bg}" />
+        <Setter Property="Shell.ForegroundColor" Value="{StaticResource Accent}" />
+        <Setter Property="Shell.TitleColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Bg}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Accent}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource Accent}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource TextFaint}" />
+    </Style>
+
+</ResourceDictionary>

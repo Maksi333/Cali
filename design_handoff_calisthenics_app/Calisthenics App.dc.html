@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:#222428;font-family:'Barlow',system-ui,sans-serif;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:32px 0}
+  ::-webkit-scrollbar{width:0;height:0}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  @keyframes ring{0%{transform:scale(.4);opacity:.7}100%{transform:scale(1.7);opacity:0}}
+  @keyframes flash{0%,100%{background:#ff6b1a}50%{background:#ff9354}}
+  @keyframes barpulse{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
+  @keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+</style>
+</helmet>
+
+<div style="width:390px;height:844px;background:#0d0e11;border-radius:44px;position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 11px #1a1c20,0 0 0 12px #303338;color:#f3f4f6;font-family:'Barlow',sans-serif">
+
+  <!-- status bar -->
+  <div style="position:absolute;top:0;left:0;right:0;height:46px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 8px;z-index:40;pointer-events:none">
+    <span style="font-size:14px;font-weight:600;letter-spacing:.3px">9:41</span>
+    <div style="display:flex;gap:6px;align-items:center">
+      <div style="display:flex;gap:2px;align-items:flex-end;height:11px">
+        <div style="width:3px;height:5px;background:#f3f4f6;border-radius:1px"></div>
+        <div style="width:3px;height:7px;background:#f3f4f6;border-radius:1px"></div>
+        <div style="width:3px;height:9px;background:#f3f4f6;border-radius:1px"></div>
+        <div style="width:3px;height:11px;background:#f3f4f6;border-radius:1px"></div>
+      </div>
+      <div style="width:22px;height:11px;border:1.5px solid #f3f4f6;border-radius:3px;padding:1.5px"><div style="width:70%;height:100%;background:#f3f4f6;border-radius:1px"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== ONBOARDING ===== -->
+  <sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:64px 30px 34px;background:radial-gradient(120% 70% at 50% 0%,#1c160f 0%,#0d0e11 60%)">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div style="width:54px;height:54px;border-radius:15px;background:#ff6b1a;display:flex;align-items:center;justify-content:center;margin-bottom:30px;font-family:'Barlow Condensed';font-weight:700;font-size:30px;color:#0d0e11">C</div>
+        <div style="font-family:'Barlow Condensed';font-weight:700;font-size:13px;letter-spacing:3px;color:#ff6b1a;text-transform:uppercase">{{ onb.kicker }}</div>
+        <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:44px;line-height:1.02;margin:10px 0 14px;text-wrap:balance">{{ onb.title }}</h1>
+        <p style="color:#9499a3;font-size:16px;line-height:1.5;margin:0 0 30px;max-width:300px">{{ onb.body }}</p>
+
+        <sc-for list="{{ onb.options }}" as="opt" hint-placeholder-count="3">
+          <button onClick="{{ opt.onClick }}" style="{{ opt.style }}">
+            <span>{{ opt.label }}</span>
+            <span style="font-size:13px;color:#9499a3;font-weight:500">{{ opt.hint }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:7px;justify-content:center;margin-bottom:18px">
+        <sc-for list="{{ onb.dots }}" as="d" hint-placeholder-count="4">
+          <div style="{{ d }}"></div>
+        </sc-for>
+      </div>
+      <button onClick="{{ onb.next }}" style="width:100%;height:56px;border:none;border-radius:16px;background:#ff6b1a;color:#0d0e11;font-family:'Barlow Condensed';font-weight:700;font-size:19px;letter-spacing:.5px;cursor:pointer">{{ onb.cta }}</button>
+      <button onClick="{{ onb.skip }}" style="margin-top:12px;background:none;border:none;color:#6b7079;font-size:14px;font-weight:600;cursor:pointer">Skip</button>
+    </div>
+  </sc-if>
+
+  <!-- ===== APP TABS ===== -->
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;top:46px;bottom:84px;overflow-y:auto">
+
+      <!-- HOME -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:8px 22px 30px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+            <div>
+              <div style="color:#9499a3;font-size:15px;font-weight:500">Good morning</div>
+              <div style="font-family:'Barlow Condensed';font-weight:700;font-size:30px;line-height:1">Let's move, Alex</div>
+            </div>
+            <div style="width:46px;height:46px;border-radius:50%;background:#1c1f26;border:1px solid #262a33;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-weight:700;font-size:18px;color:#ff6b1a">AX</div>
+          </div>
+
+          <!-- streak -->
+          <div style="background:linear-gradient(135deg,#ff6b1a,#ff8c42);border-radius:22px;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;color:#0d0e11">
+            <div>
+              <div style="font-weight:700;font-size:14px;letter-spacing:.5px;text-transform:uppercase;opacity:.75">Current streak</div>
+              <div style="font-family:'Barlow Condensed';font-weight:700;font-size:52px;line-height:.95">12 <span style="font-size:22px;font-weight:600">days</span></div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:42px;line-height:1">🔥</div>
+              <div style="font-weight:700;font-size:12px;margin-top:2px">Best: 21</div>
+            </div>
+          </div>
+
+          <!-- today card -->
+          <div style="background:#15171c;border:1px solid #262a33;border-radius:22px;padding:20px;margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-family:'Barlow Condensed';font-weight:700;font-size:12px;letter-spacing:2px;color:#ff6b1a;text-transform:uppercase">Today's plan</span>
+              <span style="font-size:12px;color:#9499a3;font-weight:600">Mon · Push</span>
+            </div>
+            <div style="font-family:'Barlow Condensed';font-weight:700;font-size:28px;margin:2px 0 6px">Push Day</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+              <span style="font-size:12px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:8px;padding:5px 9px">⏱ 28 min</span>
+              <span style="font-size:12px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:8px;padding:5px 9px">6 exercises</span>
+              <span style="font-size:12px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:8px;padding:5px 9px">Chest · Shoulders · Arms</span>
+            </div>
+            <button onClick="{{ startWorkout }}" style="width:100%;height:54px;border:none;border-radius:15px;background:#ff6b1a;color:#0d0e11;font-family:'Barlow Condensed';font-weight:700;font-size:19px;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">▶ START WORKOUT</button>
+          </div>
+
+          <!-- quick stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <sc-for list="{{ homeStats }}" as="s" hint-placeholder-count="3">
+              <div style="background:#15171c;border:1px solid #262a33;border-radius:16px;padding:14px 12px;text-align:center">
+                <div style="font-family:'Barlow Condensed';font-weight:700;font-size:26px;color:#f3f4f6;line-height:1">{{ s.value }}</div>
+                <div style="font-size:11px;color:#9499a3;font-weight:600;margin-top:3px">{{ s.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- PLANS -->
+      <sc-if value="{{ isPlans }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:8px 22px 30px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:32px;margin:0">Plans</h1>
+            <button onClick="{{ openBuilder }}" style="height:38px;padding:0 16px;border:none;border-radius:11px;background:#ff6b1a;color:#0d0e11;font-family:'Barlow Condensed';font-weight:700;font-size:15px;cursor:pointer">+ New</button>
+          </div>
+          <div style="display:flex;background:#15171c;border:1px solid #262a33;border-radius:13px;padding:4px;margin-bottom:18px">
+            <sc-for list="{{ planTabs }}" as="t" hint-placeholder-count="2">
+              <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <sc-for list="{{ shownPlans }}" as="p" hint-placeholder-count="4">
+            <div onClick="{{ p.onClick }}" style="background:#15171c;border:1px solid #262a33;border-left:3px solid {{ p.bar }};border-radius:16px;padding:16px 18px;margin-bottom:12px;cursor:pointer">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div style="font-family:'Barlow Condensed';font-weight:700;font-size:22px;line-height:1.05">{{ p.name }}</div>
+                <span style="{{ p.badgeStyle }}">{{ p.badge }}</span>
+              </div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px">
+                <span style="font-size:11px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:7px;padding:4px 8px">{{ p.diff }}</span>
+                <span style="font-size:11px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:7px;padding:4px 8px">⏱ {{ p.dur }}</span>
+                <span style="font-size:11px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:7px;padding:4px 8px">{{ p.muscles }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- EXERCISES -->
+      <sc-if value="{{ isExercises }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:8px 22px 30px">
+          <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:32px;margin:0 0 14px">Exercises</h1>
+          <div style="display:flex;align-items:center;gap:9px;background:#15171c;border:1px solid #262a33;border-radius:13px;padding:0 14px;height:46px;margin-bottom:14px">
+            <span style="color:#6b7079">🔍</span>
+            <input value="{{ q }}" onInput="{{ onSearch }}" placeholder="Search exercises" style="flex:1;background:none;border:none;outline:none;color:#f3f4f6;font-family:'Barlow';font-size:15px"/>
+          </div>
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px">
+            <sc-for list="{{ muscleChips }}" as="c" hint-placeholder-count="7">
+              <button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <sc-for list="{{ diffChips }}" as="c" hint-placeholder-count="4">
+              <button onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }}</button>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;color:#6b7079;font-weight:600;margin-bottom:10px">{{ exCount }} EXERCISES</div>
+          <sc-for list="{{ shownExercises }}" as="e" hint-placeholder-count="8">
+            <div onClick="{{ e.onClick }}" style="display:flex;align-items:center;gap:14px;background:#15171c;border:1px solid #262a33;border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer">
+              <div style="width:46px;height:46px;border-radius:11px;background:repeating-linear-gradient(45deg,#1c1f26,#1c1f26 5px,#22262e 5px,#22262e 10px);flex:none"></div>
+              <div style="flex:1;min-width:0">
+                <div style="font-family:'Barlow Condensed';font-weight:600;font-size:18px;line-height:1.1">{{ e.name }}</div>
+                <div style="font-size:12px;color:#9499a3;font-weight:500">{{ e.sub }}</div>
+              </div>
+              <span style="{{ e.diffStyle }}">{{ e.diff }}</span>
+              <span style="color:#4a4f59;font-size:18px">›</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- PROGRESS -->
+      <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:8px 22px 30px">
+          <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:32px;margin:0 0 16px">Progress</h1>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <sc-for list="{{ progStats }}" as="s" hint-placeholder-count="4">
+              <div style="background:#15171c;border:1px solid #262a33;border-radius:16px;padding:15px 16px">
+                <div style="font-size:12px;color:#9499a3;font-weight:600">{{ s.label }}</div>
+                <div style="font-family:'Barlow Condensed';font-weight:700;font-size:30px;line-height:1.1;margin-top:3px">{{ s.value }} <span style="font-size:13px;color:#9499a3;font-weight:600">{{ s.unit }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+          <!-- volume chart -->
+          <div style="background:#15171c;border:1px solid #262a33;border-radius:18px;padding:18px;margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
+              <span style="font-family:'Barlow Condensed';font-weight:700;font-size:18px">Weekly volume</span>
+              <span style="font-size:12px;color:#ff6b1a;font-weight:700">↑ 14% vs last wk</span>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:9px;height:120px">
+              <sc-for list="{{ chartBars }}" as="b" hint-placeholder-count="7">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">
+                  <div style="width:100%;height:{{ b.h }};background:{{ b.color }};border-radius:6px 6px 3px 3px"></div>
+                  <span style="font-size:10px;color:#6b7079;font-weight:600">{{ b.day }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <!-- achievements -->
+          <div style="font-family:'Barlow Condensed';font-weight:700;font-size:18px;margin-bottom:10px">Achievements</div>
+          <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px">
+            <sc-for list="{{ badges }}" as="b" hint-placeholder-count="4">
+              <div style="flex:none;width:88px;text-align:center;background:#15171c;border:1px solid #262a33;border-radius:16px;padding:14px 8px;opacity:{{ b.op }}">
+                <div style="font-size:30px;line-height:1">{{ b.icon }}</div>
+                <div style="font-size:11px;font-weight:600;margin-top:6px;color:#c5c9d1;line-height:1.2">{{ b.name }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <!-- history -->
+          <div style="font-family:'Barlow Condensed';font-weight:700;font-size:18px;margin-bottom:10px">Recent workouts</div>
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:13px;background:#15171c;border:1px solid #262a33;border-radius:14px;padding:13px 15px;margin-bottom:10px">
+              <div style="width:42px;height:42px;border-radius:11px;background:#1c1f26;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none">
+                <span style="font-family:'Barlow Condensed';font-weight:700;font-size:16px;line-height:1">{{ h.day }}</span>
+                <span style="font-size:9px;color:#9499a3;font-weight:700;text-transform:uppercase">{{ h.mon }}</span>
+              </div>
+              <div style="flex:1">
+                <div style="font-family:'Barlow Condensed';font-weight:600;font-size:17px;line-height:1.1">{{ h.name }}</div>
+                <div style="font-size:12px;color:#9499a3;font-weight:500">{{ h.meta }}</div>
+              </div>
+              <span style="{{ h.effortStyle }}">{{ h.effort }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- PROFILE -->
+      <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:8px 22px 30px">
+          <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:32px;margin:0 0 16px">Profile</h1>
+          <div style="display:flex;align-items:center;gap:15px;background:#15171c;border:1px solid #262a33;border-radius:18px;padding:18px;margin-bottom:16px">
+            <div style="width:58px;height:58px;border-radius:50%;background:#ff6b1a;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-weight:700;font-size:24px;color:#0d0e11">AX</div>
+            <div>
+              <div style="font-family:'Barlow Condensed';font-weight:700;font-size:22px;line-height:1">Alex</div>
+              <div style="font-size:13px;color:#9499a3;font-weight:500">Goal: Skill · Intermediate</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+            <div style="background:#15171c;border:1px solid #262a33;border-radius:14px;padding:14px"><div style="font-size:12px;color:#9499a3;font-weight:600">Bodyweight</div><div style="font-family:'Barlow Condensed';font-weight:700;font-size:24px">74 kg</div></div>
+            <div style="background:#15171c;border:1px solid #262a33;border-radius:14px;padding:14px"><div style="font-size:12px;color:#9499a3;font-weight:600">Max pull-ups</div><div style="font-family:'Barlow Condensed';font-weight:700;font-size:24px">14</div></div>
+          </div>
+          <div style="background:#15171c;border:1px solid #262a33;border-radius:18px;overflow:hidden;margin-bottom:16px">
+            <sc-for list="{{ settings }}" as="s" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 17px;border-bottom:1px solid #1c1f26">
+                <span style="font-size:15px;font-weight:500">{{ s.label }}</span>
+                <div style="{{ s.toggleTrack }}"><div style="{{ s.toggleKnob }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <button style="width:100%;height:50px;background:#15171c;border:1px solid #262a33;border-radius:14px;color:#f3f4f6;font-weight:600;font-size:15px;cursor:pointer;margin-bottom:10px">⤓ Export data backup</button>
+          <button style="width:100%;height:50px;background:#15171c;border:1px solid #262a33;border-radius:14px;color:#f3f4f6;font-weight:600;font-size:15px;cursor:pointer">⤒ Import backup</button>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div style="position:absolute;left:0;right:0;bottom:0;height:84px;background:rgba(13,14,17,.9);backdrop-filter:blur(16px);border-top:1px solid #1c1f26;display:flex;padding:8px 10px 20px;z-index:30">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.onClick }}" style="flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:{{ n.color }}">
+          <span style="font-size:21px;line-height:1">{{ n.icon }}</span>
+          <span style="font-size:10px;font-weight:700;letter-spacing:.3px">{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- ===== EXERCISE DETAIL ===== -->
+  <sc-if value="{{ showDetail }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:#0d0e11;z-index:50;overflow-y:auto;animation:slideup .25s ease">
+      <div style="position:relative;height:240px;background:repeating-linear-gradient(45deg,#15171c,#15171c 8px,#1a1d23 8px,#1a1d23 16px);display:flex;align-items:center;justify-content:center">
+        <span style="font-family:monospace;font-size:12px;color:#5a5f69">[ looping demo · {{ detail.name }} ]</span>
+        <button onClick="{{ closeOverlay }}" style="position:absolute;top:56px;left:20px;width:38px;height:38px;border-radius:50%;background:rgba(13,14,17,.7);border:none;color:#f3f4f6;font-size:20px;cursor:pointer">✕</button>
+      </div>
+      <div style="padding:20px 22px 40px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:32px;margin:0;line-height:1">{{ detail.name }}</h1>
+          <span style="{{ detail.diffStyle }}">{{ detail.diff }}</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px">
+          <span style="font-size:12px;font-weight:600;color:#ff6b1a;background:#251710;border-radius:8px;padding:5px 10px">● {{ detail.primary }}</span>
+          <span style="font-size:12px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:8px;padding:5px 10px">{{ detail.secondary }}</span>
+          <span style="font-size:12px;font-weight:600;color:#9499a3;background:#1c1f26;border-radius:8px;padding:5px 10px">{{ detail.equip }}</span>
+        </div>
+        <p style="color:#c5c9d1;font-size:15px;line-height:1.55;margin:0 0 22px">{{ detail.desc }}</p>
+
+        <div style="font-family:'Barlow Condensed';font-weight:700;font-size:18px;margin-bottom:12px">Form cues</div>
+        <sc-for list="{{ detail.cues }}" as="c" hint-placeholder-count="4">
+          <div style="display:flex;gap:12px;margin-bottom:11px">
+            <div style="width:24px;height:24px;border-radius:50%;background:#1c1f26;color:#ff6b1a;font-family:'Barlow Condensed';font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none">{{ c.n }}</div>
+            <div style="font-size:14px;color:#d5d8de;line-height:1.45">{{ c.text }}</div>
+          </div>
+        </sc-for>
+
+        <div style="font-family:'Barlow Condensed';font-weight:700;font-size:18px;margin:22px 0 12px">Progressions</div>
+        <div style="display:flex;gap:10px">
+          <div onClick="{{ detail.openEasier }}" style="flex:1;background:#15171c;border:1px solid #262a33;border-radius:14px;padding:14px;cursor:pointer">
+            <div style="font-size:11px;font-weight:700;color:#3ecf8e;letter-spacing:1px;text-transform:uppercase">← Easier</div>
+            <div style="font-family:'Barlow Condensed';font-weight:600;font-size:17px;margin-top:4px">{{ detail.easier }}</div>
+          </div>
+          <div onClick="{{ detail.openHarder }}" style="flex:1;background:#15171c;border:1px solid #262a33;border-radius:14px;padding:14px;cursor:pointer">
+            <div style="font-size:11px;font-weight:700;color:#ff6b1a;letter-spacing:1px;text-transform:uppercase">Harder →</div>
+            <div style="font-family:'Barlow Condensed';font-weight:600;font-size:17px;margin-top:4px">{{ detail.harder }}</div>
+          </div>
+        </div>
+
+        <div style="font-family:'Barlow Condensed';font-weight:700;font-size:18px;margin:22px 0 12px">Common mistakes</div>
+        <sc-for list="{{ detail.mistakes }}" as="m" hint-placeholder-count="2">
+          <div style="display:flex;gap:10px;margin-bottom:9px;align-items:flex-start">
+            <span style="color:#ff4d4d;font-size:14px;margin-top:1px">✕</span>
+            <span style="font-size:14px;color:#c5c9d1;line-height:1.45">{{ m }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== PLAN BUILDER ===== -->
+  <sc-if value="{{ showBuilder }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:#0d0e11;z-index:50;display:flex;flex-direction:column;animation:slideup .25s ease">
+      <div style="padding:56px 22px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1c1f26">
+        <button onClick="{{ closeOverlay }}" style="background:none;border:none;color:#9499a3;font-size:15px;font-weight:600;cursor:pointer">Cancel</button>
+        <span style="font-family:'Barlow Condensed';font-weight:700;font-size:18px">New plan</span>
+        <button onClick="{{ closeOverlay }}" style="background:none;border:none;color:#ff6b1a;font-size:15px;font-weight:700;cursor:pointer">Save</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:18px 22px 30px">
+        <input value="{{ builderName }}" onInput="{{ onBuilderName }}" style="width:100%;background:#15171c;border:1px solid #262a33;border-radius:14px;height:52px;padding:0 16px;color:#f3f4f6;font-family:'Barlow Condensed';font-weight:700;font-size:22px;outline:none;margin-bottom:8px"/>
+        <div style="font-size:13px;color:#9499a3;font-weight:500;margin-bottom:18px">{{ builderSummary }}</div>
+        <sc-for list="{{ builderEx }}" as="b" hint-placeholder-count="3">
+          <div style="background:#15171c;border:1px solid #262a33;border-radius:14px;padding:14px;margin-bottom:11px">
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:12px">
+              <span style="color:#4a4f59;font-size:18px;cursor:grab">⠿</span>
+              <span style="font-family:'Barlow Condensed';font-weight:600;font-size:18px;flex:1">{{ b.name }}</span>
+              <button onClick="{{ b.remove }}" style="background:none;border:none;color:#6b7079;font-size:17px;cursor:pointer">🗑</button>
+            </div>
+            <div style="display:flex;gap:9px">
+              <div style="flex:1;background:#1c1f26;border-radius:10px;padding:8px 10px;text-align:center"><div style="font-size:10px;color:#6b7079;font-weight:700;text-transform:uppercase">Sets</div><div style="font-family:'Barlow Condensed';font-weight:700;font-size:20px">{{ b.sets }}</div></div>
+              <div style="flex:1;background:#1c1f26;border-radius:10px;padding:8px 10px;text-align:center"><div style="font-size:10px;color:#6b7079;font-weight:700;text-transform:uppercase">{{ b.repLabel }}</div><div style="font-family:'Barlow Condensed';font-weight:700;font-size:20px">{{ b.reps }}</div></div>
+              <div style="flex:1;background:#1c1f26;border-radius:10px;padding:8px 10px;text-align:center"><div style="font-size:10px;color:#6b7079;font-weight:700;text-transform:uppercase">Rest</div><div style="font-family:'Barlow Condensed';font-weight:700;font-size:20px">{{ b.rest }}</div></div>
+            </div>
+          </div>
+        </sc-for>
+        <button onClick="{{ addBuilderEx }}" style="width:100%;height:50px;background:none;border:2px dashed #2d323b;border-radius:14px;color:#9499a3;font-family:'Barlow Condensed';font-weight:700;font-size:16px;cursor:pointer;margin-top:4px">+ Add exercise</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== ACTIVE WORKOUT (HERO) ===== -->
+  <sc-if value="{{ showWorkout }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%,#1a130c 0%,#0d0e11 55%);z-index:60;display:flex;flex-direction:column">
+      <!-- top bar -->
+      <div style="padding:52px 22px 0;display:flex;align-items:center;justify-content:space-between">
+        <button onClick="{{ endWorkout }}" style="background:#1c1f26;border:none;color:#f3f4f6;font-size:13px;font-weight:700;border-radius:10px;height:36px;padding:0 14px;cursor:pointer">End</button>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:#9499a3;font-weight:700;letter-spacing:2px;text-transform:uppercase">Session</div>
+          <div style="font-family:'Barlow Condensed';font-weight:700;font-size:26px;line-height:1;letter-spacing:1px;color:#ff6b1a">{{ sessionTime }}</div>
+        </div>
+        <div style="width:54px;text-align:right;font-family:'Barlow Condensed';font-weight:700;font-size:15px;color:#9499a3">{{ exPos }}</div>
+      </div>
+      <!-- progress -->
+      <div style="padding:14px 22px 0">
+        <div style="height:5px;background:#1c1f26;border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ workoutPct }};background:#ff6b1a;border-radius:3px;transition:width .3s"></div></div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;padding:18px 22px 0;overflow-y:auto">
+        <div style="height:200px;border-radius:20px;background:repeating-linear-gradient(45deg,#15171c,#15171c 8px,#1a1d23 8px,#1a1d23 16px);display:flex;align-items:center;justify-content:center;margin-bottom:18px;flex:none">
+          <span style="font-family:monospace;font-size:12px;color:#5a5f69">[ demo · {{ cur.name }} ]</span>
+        </div>
+        <div style="font-family:'Barlow Condensed';font-weight:700;font-size:34px;line-height:1;margin-bottom:4px">{{ cur.name }}</div>
+        <div style="color:#9499a3;font-size:14px;font-weight:500;margin-bottom:20px">Next: {{ nextName }}</div>
+
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Barlow Condensed';font-weight:700;font-size:64px;line-height:.9;color:#f3f4f6">{{ cur.target }}</div>
+            <div style="font-size:13px;color:#9499a3;font-weight:600;letter-spacing:1px;text-transform:uppercase">{{ cur.targetLabel }}</div>
+          </div>
+          <div style="flex:1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+            <sc-for list="{{ setDots }}" as="d" hint-placeholder-count="4">
+              <div style="{{ d.style }}">{{ d.n }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- bottom controls -->
+      <div style="padding:0 22px 34px">
+        <button onClick="{{ completeSet }}" style="width:100%;height:62px;border:none;border-radius:18px;background:#ff6b1a;color:#0d0e11;font-family:'Barlow Condensed';font-weight:700;font-size:22px;letter-spacing:.5px;cursor:pointer;margin-bottom:11px">✓ COMPLETE SET</button>
+        <div style="display:flex;gap:11px">
+          <button onClick="{{ prevEx }}" style="flex:1;height:50px;background:#15171c;border:1px solid #262a33;border-radius:14px;color:#f3f4f6;font-weight:700;font-size:14px;cursor:pointer">‹ Prev</button>
+          <button onClick="{{ triggerRest }}" style="flex:1;height:50px;background:#15171c;border:1px solid #262a33;border-radius:14px;color:#f3f4f6;font-weight:700;font-size:14px;cursor:pointer">⏱ Rest</button>
+          <button onClick="{{ nextEx }}" style="flex:1;height:50px;background:#15171c;border:1px solid #262a33;border-radius:14px;color:#f3f4f6;font-weight:700;font-size:14px;cursor:pointer">Next ›</button>
+        </div>
+      </div>
+
+      <!-- REST TIMER OVERLAY -->
+      <sc-if value="{{ restActive }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:rgba(8,9,11,.96);z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px">
+          <div style="font-size:13px;color:#9499a3;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px">Rest</div>
+          <div style="position:relative;width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:30px">
+            <div style="position:absolute;inset:0;border-radius:50%;border:6px solid #1c1f26"></div>
+            <div style="position:absolute;inset:0;border-radius:50%;border:6px solid #ff6b1a;clip-path:{{ restClip }};opacity:.95"></div>
+            <div style="font-family:'Barlow Condensed';font-weight:700;font-size:84px;line-height:1;color:#ff6b1a">{{ restTime }}</div>
+          </div>
+          <div style="display:flex;gap:11px;margin-bottom:16px">
+            <button onClick="{{ addRest }}" style="height:50px;padding:0 22px;background:#15171c;border:1px solid #262a33;border-radius:14px;color:#f3f4f6;font-weight:700;font-size:15px;cursor:pointer">+30s</button>
+            <button onClick="{{ skipRest }}" style="height:50px;padding:0 22px;background:#ff6b1a;border:none;border-radius:14px;color:#0d0e11;font-weight:700;font-size:15px;cursor:pointer">Skip rest →</button>
+          </div>
+          <div style="display:flex;gap:9px">
+            <sc-for list="{{ restPresets }}" as="r" hint-placeholder-count="3">
+              <button onClick="{{ r.onClick }}" style="{{ r.style }}">{{ r.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ===== SUMMARY ===== -->
+  <sc-if value="{{ showSummary }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 55% at 50% 0%,#1f1409 0%,#0d0e11 55%);z-index:65;overflow-y:auto;animation:slideup .3s ease">
+      <div style="padding:70px 24px 40px;display:flex;flex-direction:column;align-items:center;text-align:center">
+        <div style="position:relative;width:96px;height:96px;margin-bottom:18px">
+          <div style="position:absolute;inset:0;border-radius:50%;background:#ff6b1a;animation:ring 1.4s ease-out infinite"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;background:#ff6b1a;display:flex;align-items:center;justify-content:center;font-size:48px;color:#0d0e11;animation:pop .5s ease;font-weight:700">✓</div>
+        </div>
+        <div style="font-family:'Barlow Condensed';font-weight:700;font-size:13px;letter-spacing:3px;color:#ff6b1a;text-transform:uppercase">Workout complete</div>
+        <h1 style="font-family:'Barlow Condensed';font-weight:700;font-size:38px;margin:6px 0 4px;line-height:1">Nailed it. 💪</h1>
+        <p style="color:#9499a3;font-size:15px;margin:0 0 24px">Push Day · 6 exercises crushed</p>
+
+        <div style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px">
+          <sc-for list="{{ summaryStats }}" as="s" hint-placeholder-count="4">
+            <div style="background:#15171c;border:1px solid #262a33;border-radius:16px;padding:16px;text-align:left">
+              <div style="font-size:12px;color:#9499a3;font-weight:600">{{ s.label }}</div>
+              <div style="font-family:'Barlow Condensed';font-weight:700;font-size:30px;line-height:1.1;margin-top:2px">{{ s.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="width:100%;background:linear-gradient(135deg,#ff6b1a,#ff8c42);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:13px;margin-bottom:20px;color:#0d0e11;text-align:left">
+          <span style="font-size:30px">🏆</span>
+          <div><div style="font-weight:700;font-size:15px">New personal record!</div><div style="font-size:13px;font-weight:600;opacity:.8">Diamond push-ups · 18 reps</div></div>
+        </div>
+
+        <div style="width:100%;text-align:left;font-size:13px;color:#9499a3;font-weight:600;margin-bottom:10px">HOW DID IT FEEL?</div>
+        <div style="width:100%;display:flex;gap:9px;margin-bottom:24px">
+          <sc-for list="{{ effortChips }}" as="e" hint-placeholder-count="3">
+            <button onClick="{{ e.onClick }}" style="{{ e.style }}">{{ e.label }}</button>
+          </sc-for>
+        </div>
+
+        <button onClick="{{ saveSummary }}" style="width:100%;height:58px;border:none;border-radius:16px;background:#ff6b1a;color:#0d0e11;font-family:'Barlow Condensed';font-weight:700;font-size:20px;letter-spacing:.5px;cursor:pointer">SAVE TO HISTORY</button>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'onboarding', onbStep: 0,
+    tab: 'home', overlay: null,
+    sessionSec: 0, running: false,
+    curIdx: 0, doneSets: {},
+    restActive: false, restSec: 60, restTotal: 60,
+    planTab: 'preset', muscle: 'All', diff: 'All', q: '',
+    detailId: 'pushup', builderName: 'My Custom Plan', effort: 1
+  };
+
+  EX = {
+    pushup:{name:'Push-ups',primary:'Chest',secondary:'Shoulders, Triceps',diff:'Beginner',equip:'No equipment',type:'reps',easier:'Incline push-ups',harder:'Diamond push-ups',easierId:'incline',harderId:'diamond',desc:'The foundational horizontal press. Builds chest, shoulders and triceps with zero equipment.',cues:['Hands just wider than shoulders, fingers spread.','Brace your core and squeeze your glutes — body in one line.','Lower until your chest is a fist above the floor.','Drive up explosively, elbows tucked ~45°.'],mistakes:['Flaring elbows out to 90° — strains shoulders.','Sagging hips or piking up.']},
+    incline:{name:'Incline Push-ups',primary:'Chest',secondary:'Shoulders',diff:'Beginner',equip:'Bench / step',type:'reps',easier:'Wall push-ups',harder:'Push-ups',easierId:'pushup',harderId:'pushup',desc:'Hands elevated reduces load — the perfect entry to pressing.',cues:['Place hands on a stable raised surface.','Keep a straight line head to heels.','Lower chest to the edge with control.'],mistakes:['Surface too high removes the challenge.','Letting hips drop.']},
+    diamond:{name:'Diamond Push-ups',primary:'Triceps',secondary:'Chest',diff:'Intermediate',equip:'No equipment',type:'reps',easier:'Push-ups',harder:'Archer push-ups',easierId:'pushup',harderId:'pushup',desc:'Hands together shifts the load onto the triceps for serious arm strength.',cues:['Form a diamond with thumbs and index fingers.','Keep elbows tucked tight to your sides.','Lower until chest touches your hands.'],mistakes:['Elbows flaring outward.','Partial range of motion.']},
+    pike:{name:'Pike Push-ups',primary:'Shoulders',secondary:'Triceps',diff:'Intermediate',equip:'No equipment',type:'reps',easier:'Push-ups',harder:'Handstand push-ups',easierId:'pushup',harderId:'pushup',desc:'A vertical press that builds toward the handstand push-up.',cues:['Pike hips high, body in an inverted V.','Lower the crown of your head toward the floor.','Press back up through the shoulders.'],mistakes:['Hips too low (becomes a regular push-up).','Bending at the waist instead of pressing.']},
+    dips:{name:'Dips',primary:'Triceps',secondary:'Chest, Shoulders',diff:'Intermediate',equip:'Dip station',type:'reps',easier:'Bench dips',harder:'Ring dips',easierId:'pushup',harderId:'pushup',desc:'A powerful vertical pushing movement for triceps and lower chest.',cues:['Start at the top, arms locked.','Lower until shoulders dip just below elbows.','Lean slightly forward for more chest.'],mistakes:['Going too deep and stressing shoulders.','Shrugging the shoulders up.']},
+    pullup:{name:'Pull-ups',primary:'Back',secondary:'Biceps',diff:'Intermediate',equip:'Pull-up bar',type:'reps',easier:'Inverted rows',harder:'Muscle-ups',easierId:'rows',harderId:'pullup',desc:'The king of pulling movements — builds a strong, wide back.',cues:['Grip overhand, just wider than shoulders.','Pull your chest toward the bar, lead with elbows.','Control the descent to a full hang.'],mistakes:['Kipping / using momentum.','Not reaching full extension at the bottom.']},
+    chinup:{name:'Chin-ups',primary:'Biceps',secondary:'Back',diff:'Intermediate',equip:'Pull-up bar',type:'reps',easier:'Inverted rows',harder:'Pull-ups',easierId:'rows',harderId:'pullup',desc:'Underhand grip emphasises the biceps while still hammering the back.',cues:['Grip underhand, shoulder width.','Pull until chin clears the bar.','Lower slowly.'],mistakes:['Swinging the legs.','Half reps.']},
+    rows:{name:'Inverted Rows',primary:'Back',secondary:'Biceps',diff:'Beginner',equip:'Bar / table',type:'reps',easier:'Doorway rows',harder:'Pull-ups',easierId:'rows',harderId:'pullup',desc:'A horizontal pull — the best entry point to building pulling strength.',cues:['Hang under a waist-high bar, body straight.','Pull chest to the bar, squeeze shoulder blades.','Lower with control.'],mistakes:['Letting hips sag.','Shrugging instead of retracting.']},
+    squat:{name:'Squats',primary:'Legs',secondary:'Glutes',diff:'Beginner',equip:'No equipment',type:'reps',easier:'Box squats',harder:'Pistol squats',easierId:'squat',harderId:'pistol',desc:'The fundamental lower-body movement for quads and glutes.',cues:['Feet shoulder-width, toes slightly out.','Sit hips back and down, chest tall.','Drive through your heels to stand.'],mistakes:['Knees caving inward.','Heels lifting off the floor.']},
+    lunge:{name:'Lunges',primary:'Legs',secondary:'Glutes',diff:'Beginner',equip:'No equipment',type:'reps',easier:'Split squats',harder:'Jump lunges',easierId:'squat',harderId:'squat',desc:'A single-leg movement that builds balance and unilateral strength.',cues:['Step forward, lower the back knee toward the floor.','Keep front shin vertical.','Push back to the start.'],mistakes:['Front knee travelling past the toes.','Leaning the torso forward.']},
+    pistol:{name:'Pistol Squats',primary:'Legs',secondary:'Glutes, Core',diff:'Advanced',equip:'No equipment',type:'reps',easier:'Squats',harder:'Weighted pistols',easierId:'squat',harderId:'pistol',desc:'A single-leg squat demanding strength, balance and mobility.',cues:['Extend one leg forward, arms out for balance.','Descend slowly on the working leg.','Keep heel planted and chest up.'],mistakes:['Collapsing at the bottom.','Heel lifting.']},
+    plank:{name:'Plank',primary:'Core',secondary:'Shoulders',diff:'Beginner',equip:'No equipment',type:'hold',easier:'Knee plank',harder:'RKC plank',easierId:'plank',harderId:'hollow',desc:'An isometric hold that builds deep core stability.',cues:['Forearms under shoulders.','Body in one straight line, glutes squeezed.','Breathe steadily — do not let hips sag.'],mistakes:['Hips rising or dropping.','Holding the breath.']},
+    hollow:{name:'Hollow Hold',primary:'Core',secondary:'Hip flexors',diff:'Intermediate',equip:'No equipment',type:'hold',easier:'Tuck hold',harder:'Hollow rocks',easierId:'plank',harderId:'hollow',desc:'A gymnastics staple that builds total anterior-core tension.',cues:['Lie down, press lower back into the floor.','Lift shoulders and legs, arms overhead.','Maintain the dish shape.'],mistakes:['Lower back arching off the floor.','Legs too high, reducing tension.']},
+    legraise:{name:'Leg Raises',primary:'Core',secondary:'Hip flexors',diff:'Beginner',equip:'No equipment',type:'reps',easier:'Knee raises',harder:'Hanging leg raises',easierId:'legraise',harderId:'hollow',desc:'Targets the lower abs through hip flexion.',cues:['Lie flat, hands under your hips.','Raise straight legs to vertical.','Lower slowly without touching the floor.'],mistakes:['Using momentum to swing.','Lower back lifting off the floor.']},
+    mtnclimber:{name:'Mountain Climbers',primary:'Core',secondary:'Full Body',diff:'Beginner',equip:'No equipment',type:'reps',easier:'Slow climbers',harder:'Cross-body climbers',easierId:'mtnclimber',harderId:'burpee',desc:'A dynamic core and conditioning move.',cues:['Start in a push-up position.','Drive knees toward your chest alternately.','Keep hips low and core tight.'],mistakes:['Bouncing the hips up.','Going too fast and losing form.']},
+    burpee:{name:'Burpees',primary:'Full Body',secondary:'Legs, Chest',diff:'Intermediate',equip:'No equipment',type:'reps',easier:'Squat thrusts',harder:'Burpee pull-ups',easierId:'squat',harderId:'burpee',desc:'A full-body conditioning movement that spikes the heart rate.',cues:['Drop to a squat, kick feet back.','Do a push-up, hop feet in.','Jump up explosively.'],mistakes:['Sloppy push-up portion.','Landing with locked knees.']},
+    handstand:{name:'Handstand Hold',primary:'Shoulders',secondary:'Core',diff:'Advanced',equip:'Wall',type:'hold',easier:'Pike hold',harder:'Free handstand',easierId:'pike',harderId:'handstand',desc:'A signature skill building shoulder strength and balance.',cues:['Kick up against a wall, hands shoulder-width.','Stack hips over shoulders over hands.','Push the floor away, squeeze everything.'],mistakes:['Over-arching the lower back (banana shape).','Not pushing tall through the shoulders.']},
+    glutebridge:{name:'Glute Bridges',primary:'Glutes',secondary:'Hamstrings',diff:'Beginner',equip:'No equipment',type:'reps',easier:'Glute bridges',harder:'Single-leg bridge',easierId:'glutebridge',harderId:'glutebridge',desc:'Isolates and strengthens the glutes and posterior chain.',cues:['Lie on your back, knees bent, feet flat.','Drive hips up, squeeze glutes at the top.','Lower with control.'],mistakes:['Over-extending the lower back.','Pushing through the toes.']}
+  };
+
+  PLAN = [
+    {id:'pushday',name:'Push Day',ex:['pushup','pike','dips','diamond','pushup','plank']},
+  ];
+
+  PLANS = [
+    {name:'Full-Body Beginner',preset:true,diff:'Beginner',dur:'24 min',muscles:'Full Body'},
+    {name:'Push Day',preset:true,diff:'Intermediate',dur:'28 min',muscles:'Chest · Shoulders · Arms'},
+    {name:'Pull Day',preset:true,diff:'Intermediate',dur:'26 min',muscles:'Back · Biceps'},
+    {name:'Leg Day',preset:true,diff:'Beginner',dur:'22 min',muscles:'Legs · Glutes'},
+    {name:'Core Crusher',preset:true,diff:'Intermediate',dur:'18 min',muscles:'Core'},
+    {name:'Upper-Body Burnout',preset:true,diff:'Advanced',dur:'32 min',muscles:'Chest · Back · Arms'},
+    {name:'My Morning Flow',preset:false,diff:'Beginner',dur:'15 min',muscles:'Full Body'},
+    {name:'Skill Practice',preset:false,diff:'Advanced',dur:'30 min',muscles:'Shoulders · Core'}
+  ];
+
+  ACTIVE = ['pushup','pike','dips','diamond','squat','plank'];
+
+  componentDidMount() {
+    this._t = setInterval(() => {
+      this.setState(s => {
+        let n = {};
+        if (s.running) n.sessionSec = s.sessionSec + 1;
+        if (s.restActive) {
+          if (s.restSec <= 1) { n.restActive = false; n.restSec = 0; }
+          else n.restSec = s.restSec - 1;
+        }
+        return n;
+      });
+    }, 1000);
+  }
+  componentWillUnmount(){ clearInterval(this._t); }
+
+  fmt(t){ const m=Math.floor(t/60), s=t%60; return m+':'+String(s).padStart(2,'0'); }
+
+  pill(active,color){ return active
+    ? `font-size:13px;font-weight:700;color:#0d0e11;background:${color||'#ff6b1a'};border:none;border-radius:9px;padding:7px 13px;cursor:pointer;white-space:nowrap`
+    : `font-size:13px;font-weight:600;color:#9499a3;background:#15171c;border:1px solid #262a33;border-radius:9px;padding:7px 13px;cursor:pointer;white-space:nowrap`; }
+
+  diffBadge(d){ const c={Beginner:'#3ecf8e',Intermediate:'#ff6b1a',Advanced:'#ff4d6b'}[d]||'#9499a3';
+    return `font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:${c};border:1px solid ${c}55;border-radius:7px;padding:3px 7px;flex:none`; }
+
+  renderVals() {
+    const S = this.state, EX = this.EX;
+    const set = (o)=>this.setState(o);
+
+    // ---- onboarding ----
+    const steps = [
+      {kicker:'Welcome',title:'Train anywhere. Just your body.',body:'Build real strength with bodyweight calisthenics — no gym, no weights, no excuses.',cta:'Get started'},
+      {kicker:'Your goal',title:"What's your focus?",body:'We tailor your starting plan around it.',options:[['Build strength','Get stronger'],['Learn skills','Pull-ups, handstands'],['Lose fat','Lean out'],['Mobility','Move better']],cta:'Continue'},
+      {kicker:'Experience',title:'How long have you trained?',body:'This sets your starting difficulty.',options:[['Brand new','0–3 months'],['Some experience','3–12 months'],['Experienced','1+ years']],cta:'Continue'},
+      {kicker:'Baseline',title:'A quick benchmark',body:'How many push-ups can you do right now?',options:[['0–5','Beginner'],['6–15','Intermediate'],['16+','Advanced']],cta:'Build my plan'}
+    ];
+    const st = steps[S.onbStep];
+    const dot = (on)=>`width:${on?22:7}px;height:7px;border-radius:4px;background:${on?'#ff6b1a':'#2d323b'};transition:all .2s`;
+    const onb = {
+      kicker:st.kicker, title:st.title, body:st.body, cta:st.cta,
+      dots: steps.map((_,i)=>dot(i===S.onbStep)),
+      options: (st.options||[]).map(o=>({label:o[0],hint:o[1],
+        style:'width:100%;display:flex;align-items:center;justify-content:space-between;background:#15171c;border:1px solid #262a33;border-radius:14px;padding:16px 18px;margin-bottom:10px;color:#f3f4f6;font-family:Barlow;font-weight:600;font-size:16px;cursor:pointer;text-align:left',
+        onClick:()=>set({onbStep:Math.min(S.onbStep+1,steps.length-1)})})),
+      next:()=>{ if(S.onbStep>=steps.length-1) set({screen:'app'}); else set({onbStep:S.onbStep+1}); },
+      skip:()=>set({screen:'app'})
+    };
+
+    // ---- nav ----
+    const tabs=[['home','Home','◆'],['plans','Plans','▦'],['exercises','Exercises','≣'],['progress','Progress','▲'],['profile','You','●']];
+    const navItems = tabs.map(t=>({label:t[1],icon:t[2],color:S.tab===t[0]?'#ff6b1a':'#6b7079',onClick:()=>set({tab:t[0]})}));
+
+    // ---- home ----
+    const homeStats=[{value:'4',label:'This week'},{value:'48m',label:'Time'},{value:'3',label:'New PRs'}];
+
+    // ---- plans ----
+    const planTabs=[['preset','Predefined'],['mine','My plans']].map(t=>({label:t[1],
+      style:`flex:1;height:36px;border:none;border-radius:9px;font-family:Barlow Condensed;font-weight:700;font-size:14px;cursor:pointer;${S.planTab===t[0]?'background:#ff6b1a;color:#0d0e11':'background:none;color:#9499a3'}`,
+      onClick:()=>set({planTab:t[0]})}));
+    const shownPlans = this.PLANS.filter(p=>S.planTab==='preset'?p.preset:!p.preset).map(p=>({
+      name:p.name,diff:p.diff,dur:p.dur,muscles:p.muscles,
+      bar:p.preset?'#ff6b1a':'#3a3f49',
+      badge:p.preset?'PRESET':'CUSTOM',
+      badgeStyle:`font-size:9px;font-weight:700;letter-spacing:.5px;border-radius:6px;padding:3px 7px;flex:none;${p.preset?'background:#251710;color:#ff6b1a':'background:#1c1f26;color:#9499a3'}`,
+      onClick:()=>set({overlay:'workout',running:true,sessionSec:0,curIdx:0,doneSets:{},restActive:false})
+    }));
+
+    // ---- exercises ----
+    const muscles=['All','Chest','Back','Shoulders','Arms','Core','Legs','Full Body'];
+    const muscleChips = muscles.map(m=>({label:m,style:this.pill(S.muscle===m),onClick:()=>set({muscle:m})}));
+    const diffs=['All','Beginner','Intermediate','Advanced'];
+    const diffChips = diffs.map(d=>({label:d,style:this.pill(S.diff===d,'#3a3f49')+(S.diff===d?';color:#fff':''),onClick:()=>set({diff:d})}));
+    const matchMuscle=(e)=>{ if(S.muscle==='All')return true; const all=(e.primary+' '+e.secondary); return all.toLowerCase().includes(S.muscle.toLowerCase()); };
+    const list = Object.entries(EX).filter(([id,e])=>
+      matchMuscle(e) && (S.diff==='All'||e.diff===S.diff) && (!S.q||e.name.toLowerCase().includes(S.q.toLowerCase()))
+    );
+    const shownExercises = list.map(([id,e])=>({name:e.name,sub:e.primary+' · '+e.equip,diff:e.diff,diffStyle:this.diffBadge(e.diff),
+      onClick:()=>set({overlay:'detail',detailId:id})}));
+
+    // ---- progress ----
+    const progStats=[{label:'This week',value:'4',unit:'sessions'},{label:'Total volume',value:'1.2k',unit:'reps'},{label:'Time trained',value:'5.4',unit:'hrs'},{label:'Longest streak',value:'21',unit:'days'}];
+    const barH=[55,70,40,85,60,95,75];
+    const chartBars=['M','T','W','T','F','S','S'].map((d,i)=>({day:d,h:barH[i]+'%',color:i===5?'#ff6b1a':'#2d323b'}));
+    const badges=[['🥇','First workout',1],['🔥','7-day streak',1],['💯','100 in a day',1],['🤸','First handstand',.35],['🦾','First muscle-up',.35]].map(b=>({icon:b[0],name:b[1],op:b[2]}));
+    const eff=(t,c)=>`font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:${c};border:1px solid ${c}55;border-radius:7px;padding:3px 8px;flex:none`;
+    const history=[
+      {day:'21',mon:'Jun',name:'Push Day',meta:'28 min · 6 exercises',effort:'Just right',effortStyle:eff('Just right','#3ecf8e')},
+      {day:'19',mon:'Jun',name:'Leg Day',meta:'22 min · 5 exercises',effort:'Too hard',effortStyle:eff('Too hard','#ff4d6b')},
+      {day:'17',mon:'Jun',name:'Core Crusher',meta:'18 min · 4 exercises',effort:'Just right',effortStyle:eff('Just right','#3ecf8e')}
+    ];
+
+    // ---- profile ----
+    const tog=(on)=>({toggleTrack:`width:46px;height:27px;border-radius:14px;padding:3px;display:flex;${on?'background:#ff6b1a;justify-content:flex-end':'background:#2d323b;justify-content:flex-start'}`,toggleKnob:'width:21px;height:21px;border-radius:50%;background:#fff'});
+    const settings=[['Sound alerts',true],['Vibration / haptics',true],['Auto-start rest timer',true],['Auto-progression',false],['Workout reminders',true]].map(s=>({label:s[0],...tog(s[1])}));
+
+    // ---- detail ----
+    const de = EX[S.detailId]||EX.pushup;
+    const detail={ name:de.name, diff:de.diff, diffStyle:this.diffBadge(de.diff),
+      primary:de.primary, secondary:de.secondary, equip:de.equip, desc:de.desc,
+      cues:de.cues.map((t,i)=>({n:i+1,text:t})), mistakes:de.mistakes,
+      easier:de.easier, harder:de.harder,
+      openEasier:()=>set({detailId:de.easierId}), openHarder:()=>set({detailId:de.harderId}) };
+
+    // ---- builder ----
+    const bdef=[['pushup',3,12,'60s'],['squat',3,15,'60s'],['plank',3,'45s','45s']];
+    const builderEx = bdef.map((b,i)=>{ const e=EX[b[0]]; const hold=e.type==='hold';
+      return {name:e.name,sets:b[1],reps:b[2],repLabel:hold?'Hold':'Reps',rest:b[3],remove:()=>{}}; });
+    const builderSummary='~16 min · '+builderEx.length+' exercises · Full Body';
+
+    // ---- active workout ----
+    const aid = this.ACTIVE[S.curIdx], ae = EX[aid];
+    const nid = this.ACTIVE[S.curIdx+1];
+    const totalSets=3, done=S.doneSets[S.curIdx]||0;
+    const setDots = Array.from({length:totalSets},(_,i)=>({n:i+1,
+      style:`width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:Barlow Condensed;font-weight:700;font-size:16px;${i<done?'background:#ff6b1a;color:#0d0e11':'background:#15171c;border:1px solid #262a33;color:#6b7079'}`}));
+    const completeSet=()=>{ this.setState(s=>{ const nd={...s.doneSets}; nd[s.curIdx]=Math.min((nd[s.curIdx]||0)+1,totalSets); return {doneSets:nd,restActive:true,restSec:s.restTotal}; }); };
+    const setRest=(v)=>set({restTotal:v,restSec:v});
+    const restPresets=[30,60,90].map(v=>({label:v+'s',style:this.pill(S.restTotal===v),onClick:()=>setRest(v)}));
+    const restClip=(()=>{ const p=S.restTotal? (1-S.restSec/S.restTotal):0; const a=p*360;
+      // simple top-based wedge using conic via clip not ideal; fallback full ring opacity
+      return 'inset(0)'; })();
+
+    // ---- summary ----
+    const summaryStats=[{label:'Duration',value:this.fmt(S.sessionSec)||'0:00'},{label:'Exercises',value:'6'},{label:'Total sets',value:'18'},{label:'Total reps',value:'214'}];
+    const effChips=[['Too easy','#3ecf8e'],['Just right','#ff6b1a'],['Too hard','#ff4d6b']].map((e,i)=>({label:e[0],
+      style:`flex:1;height:46px;border-radius:12px;font-family:Barlow Condensed;font-weight:700;font-size:14px;cursor:pointer;${S.effort===i?`background:${e[1]};color:#0d0e11;border:none`:'background:#15171c;border:1px solid #262a33;color:#9499a3'}`,
+      onClick:()=>set({effort:i})}));
+
+    return {
+      isOnboarding:S.screen==='onboarding', isApp:S.screen==='app',
+      isHome:S.tab==='home'&&!S.overlay, isPlans:S.tab==='plans'&&!S.overlay,
+      isExercises:S.tab==='exercises'&&!S.overlay, isProgress:S.tab==='progress'&&!S.overlay,
+      isProfile:S.tab==='profile'&&!S.overlay,
+      showDetail:S.overlay==='detail', showBuilder:S.overlay==='builder',
+      showWorkout:S.overlay==='workout', showSummary:S.overlay==='summary',
+      onb, navItems, homeStats,
+      startWorkout:()=>set({overlay:'workout',running:true,sessionSec:0,curIdx:0,doneSets:{},restActive:false}),
+      openBuilder:()=>set({overlay:'builder'}),
+      planTabs, shownPlans,
+      q:S.q, onSearch:(e)=>set({q:e.target.value}),
+      muscleChips, diffChips, shownExercises, exCount:shownExercises.length,
+      progStats, chartBars, badges, history, settings,
+      detail, closeOverlay:()=>set({overlay:null}),
+      builderName:S.builderName, onBuilderName:(e)=>set({builderName:e.target.value}),
+      builderEx, builderSummary, addBuilderEx:()=>{},
+      sessionTime:this.fmt(S.sessionSec), exPos:(S.curIdx+1)+'/'+this.ACTIVE.length,
+      workoutPct:Math.round(((S.curIdx+(done/totalSets))/this.ACTIVE.length)*100)+'%',
+      cur:{name:ae.name, target:ae.type==='hold'?'0:45':'12', targetLabel:ae.type==='hold'?'hold · 3 sets':'reps · 3 sets'},
+      nextName: nid?EX[nid].name:'Finish 🎉',
+      setDots, completeSet,
+      prevEx:()=>set({curIdx:Math.max(0,S.curIdx-1),restActive:false}),
+      nextEx:()=>{ if(S.curIdx>=this.ACTIVE.length-1) set({overlay:'summary',running:false,restActive:false}); else set({curIdx:S.curIdx+1,restActive:false}); },
+      endWorkout:()=>set({overlay:'summary',running:false,restActive:false}),
+      triggerRest:()=>set({restActive:true,restSec:S.restTotal}),
+      restActive:S.restActive, restTime:this.fmt(S.restSec), restClip,
+      addRest:()=>set({restSec:S.restSec+30}), skipRest:()=>set({restActive:false}),
+      restPresets,
+      summaryStats, effortChips:effChips,
+      saveSummary:()=>set({overlay:null,tab:'progress'})
+    };
+  }
+}
+</script>
+</body>
+</html>

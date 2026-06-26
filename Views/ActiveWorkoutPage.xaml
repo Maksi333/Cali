@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:c="clr-namespace:Cali.Controls"
+             x:Class="Cali.Views.ActiveWorkoutPage"
+             Shell.NavBarIsVisible="False"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <Grid.Background>
+            <RadialGradientBrush Center="0.5,0.32" Radius="1.1">
+                <GradientStop Color="#1A130C" Offset="0.0" />
+                <GradientStop Color="#0D0E11" Offset="1.0" />
+            </RadialGradientBrush>
+        </Grid.Background>
+
+        <!-- Top bar -->
+        <Grid Grid.Row="0" Padding="22,16,22,8" ColumnDefinitions="Auto,*,Auto" VerticalOptions="Start">
+            <Button Grid.Column="0" Text="End" Command="{Binding EndCommand}"
+                    SemanticProperties.Description="End workout" SemanticProperties.Hint="Ends the session and opens the summary"
+                    BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource TextPrimary}"
+                    FontFamily="BarlowSemiBold" FontSize="13" Padding="14,6" CornerRadius="10" HeightRequest="44" />
+            <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="0">
+                <Label Text="SESSION" HorizontalOptions="Center" TextColor="{StaticResource TextFaint}"
+                       FontFamily="BarlowBold" FontSize="11" CharacterSpacing="2" />
+                <Label Text="{Binding Session.SessionDisplay}" HorizontalOptions="Center"
+                       TextColor="{StaticResource Accent}" FontFamily="BarlowCondensedBold" FontSize="26" CharacterSpacing="1" />
+            </VerticalStackLayout>
+            <Label Grid.Column="2" Text="{Binding Session.PositionLabel}" VerticalOptions="Center"
+                   TextColor="{StaticResource TextMuted}" FontFamily="BarlowSemiBold" FontSize="14" />
+        </Grid>
+
+        <!-- Progress bar -->
+        <ProgressBar Grid.Row="1" Progress="{Binding Session.Progress}"
+                     ProgressColor="{StaticResource Accent}" BackgroundColor="{StaticResource Surface2}"
+                     HeightRequest="3" Margin="22,4" />
+
+        <!-- Content -->
+        <VerticalStackLayout Grid.Row="2" Padding="22,10" Spacing="14">
+            <Border StrokeShape="RoundRectangle 18" Stroke="{StaticResource Line}" StrokeThickness="1" HeightRequest="200">
+                <c:StripedPlaceholder Label="{Binding Session.Current.Exercise.Name}" />
+            </Border>
+            <Label Text="{Binding Session.Current.Exercise.Name}" FontFamily="BarlowCondensedBold"
+                   FontSize="34" TextColor="{StaticResource TextPrimary}" />
+            <Label Text="{Binding Session.NextName, StringFormat='Next: {0}'}"
+                   TextColor="{StaticResource TextFaint}" FontSize="14" />
+            <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center" Margin="0,8,0,0">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <!-- Inline rep logger: defaults to target, tap −/+ to log the actual reps/seconds done. -->
+                    <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="12" HorizontalOptions="Start">
+                        <Button Grid.Column="0" Text="−" Command="{Binding DecRepCommand}"
+                                SemanticProperties.Description="One fewer this set"
+                                BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource Accent}"
+                                FontFamily="BarlowBold" FontSize="26" WidthRequest="50" HeightRequest="50"
+                                CornerRadius="25" Padding="0" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Session.PendingValue}" FontFamily="BarlowCondensedBold"
+                               FontSize="64" TextColor="{StaticResource TextPrimary}" VerticalOptions="Center"
+                               HorizontalTextAlignment="Center" MinimumWidthRequest="62" />
+                        <Button Grid.Column="2" Text="+" Command="{Binding IncRepCommand}"
+                                SemanticProperties.Description="One more this set"
+                                BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource Accent}"
+                                FontFamily="BarlowBold" FontSize="26" WidthRequest="50" HeightRequest="50"
+                                CornerRadius="25" Padding="0" VerticalOptions="Center" />
+                    </Grid>
+                    <Label Text="{Binding Session.TargetUnitLabel}" FontFamily="BarlowSemiBold"
+                           FontSize="12" TextColor="{StaticResource TextFaint}" CharacterSpacing="1" />
+                </VerticalStackLayout>
+                <c:SetDots Grid.Column="1" HeightRequest="44" VerticalOptions="Center"
+                           Total="{Binding Session.TotalSetsForCurrent}" Done="{Binding Session.DoneSetsForCurrent}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Bottom controls -->
+        <VerticalStackLayout Grid.Row="3" Padding="22,0,22,30" Spacing="12">
+            <Button Text="✓  COMPLETE SET" Command="{Binding CompleteSetCommand}"
+                    BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                    FontFamily="BarlowBold" FontSize="17" HeightRequest="62" CornerRadius="16" />
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <Button Grid.Column="0" Text="‹ Prev" Command="{Binding BackwardCommand}"
+                        SemanticProperties.Description="Previous exercise"
+                        BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource TextMuted}"
+                        FontFamily="BarlowSemiBold" FontSize="14" HeightRequest="48" CornerRadius="12" />
+                <Button Grid.Column="1" Text="Rest" Command="{Binding RestCommand}"
+                        SemanticProperties.Description="Start rest timer"
+                        BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource TextMuted}"
+                        FontFamily="BarlowSemiBold" FontSize="14" HeightRequest="48" CornerRadius="12" />
+                <Button Grid.Column="2" Text="Next ›" Command="{Binding ForwardCommand}"
+                        SemanticProperties.Description="Next exercise"
+                        BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource TextMuted}"
+                        FontFamily="BarlowSemiBold" FontSize="14" HeightRequest="48" CornerRadius="12" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Rest overlay -->
+        <Grid Grid.Row="0" Grid.RowSpan="4" IsVisible="{Binding Session.RestActive}" BackgroundColor="#E60D0E11">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="22">
+                <Label Text="REST" HorizontalOptions="Center" TextColor="{StaticResource TextMuted}"
+                       FontFamily="BarlowBold" FontSize="13" CharacterSpacing="3" />
+                <Grid WidthRequest="240" HeightRequest="240" HorizontalOptions="Center">
+                    <c:RingTimer Fraction="{Binding Session.RestFraction}" />
+                    <Label Text="{Binding Session.RestDisplay}" HorizontalOptions="Center" VerticalOptions="Center"
+                           TextColor="{StaticResource Accent}" FontFamily="BarlowCondensedBold" FontSize="84" />
+                </Grid>
+                <Grid ColumnDefinitions="Auto,Auto" ColumnSpacing="12" HorizontalOptions="Center">
+                    <Button Grid.Column="0" Text="+30s" Command="{Binding AddRestCommand}"
+                            SemanticProperties.Description="Add 30 seconds to rest"
+                            BackgroundColor="{StaticResource Surface}" TextColor="{StaticResource TextPrimary}"
+                            FontFamily="BarlowSemiBold" FontSize="15" HeightRequest="48" Padding="22,0" CornerRadius="12" />
+                    <Button Grid.Column="1" Text="Skip rest →" Command="{Binding SkipRestCommand}"
+                            SemanticProperties.Description="Skip rest"
+                            BackgroundColor="{StaticResource Accent}" TextColor="{StaticResource AccentOn}"
+                            FontFamily="BarlowBold" FontSize="15" HeightRequest="48" Padding="22,0" CornerRadius="12" />
+                </Grid>
+                <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="10" HorizontalOptions="Center">
+                    <Button Grid.Column="0" Text="30s" Command="{Binding PresetCommand}" CommandParameter="30"
+                            BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource TextMuted}"
+                            FontFamily="BarlowSemiBold" FontSize="13" HeightRequest="40" Padding="16,0" CornerRadius="10" />
+                    <Button Grid.Column="1" Text="60s" Command="{Binding PresetCommand}" CommandParameter="60"
+                            BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource TextMuted}"
+                            FontFamily="BarlowSemiBold" FontSize="13" HeightRequest="40" Padding="16,0" CornerRadius="10" />
+                    <Button Grid.Column="2" Text="90s" Command="{Binding PresetCommand}" CommandParameter="90"
+                            BackgroundColor="{StaticResource Surface2}" TextColor="{StaticResource TextMuted}"
+                            FontFamily="BarlowSemiBold" FontSize="13" HeightRequest="40" Padding="16,0" CornerRadius="10" />
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+</ContentPage>

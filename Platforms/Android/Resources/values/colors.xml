@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand orange (#FF6B1A). colorAccent drives the Entry/SearchBar underline + text caret on Android. -->
+    <color name="colorPrimary">#FF6B1A</color>
+    <color name="colorPrimaryDark">#C24E0F</color>
+    <color name="colorAccent">#FF6B1A</color>
+</resources>

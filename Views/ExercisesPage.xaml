@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Cali.ViewModels"
+             xmlns:c="clr-namespace:Cali.Controls"
+             x:Class="Cali.Views.ExercisesPage"
+             x:Name="Root"
+             Title="Exercises"
+             BackgroundColor="{StaticResource Bg}">
+
+    <Grid RowDefinitions="Auto,*">
+        <VerticalStackLayout Grid.Row="0" Spacing="12" Padding="0,16,0,8">
+            <Label Text="Exercises" FontFamily="BarlowCondensedBold" FontSize="32"
+                   TextColor="{StaticResource TextPrimary}" Margin="22,0" />
+
+            <Border Margin="22,0" StrokeShape="RoundRectangle 13" BackgroundColor="{StaticResource Surface}"
+                    Stroke="{StaticResource Line}" StrokeThickness="1" Padding="14,0" HeightRequest="48">
+                <Entry Text="{Binding Search}" Placeholder="Search exercises"
+                       SemanticProperties.Description="Search exercises"
+                       PlaceholderColor="{StaticResource TextFaint}" TextColor="{StaticResource TextPrimary}"
+                       BackgroundColor="Transparent" VerticalOptions="Center" />
+            </Border>
+
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="22,0">
+                <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding MuscleChips}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ChipViewModel">
+                            <Button Text="{Binding Label}" BackgroundColor="{Binding BgColor}" TextColor="{Binding TextColor}"
+                                    FontFamily="BarlowSemiBold" FontSize="13" CornerRadius="11" HeightRequest="38" Padding="16,0"
+                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectMuscleCommand}"
+                                    CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="22,0">
+                <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding DifficultyChips}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ChipViewModel">
+                            <Button Text="{Binding Label}" BackgroundColor="{Binding BgColor}" TextColor="{Binding TextColor}"
+                                    FontFamily="BarlowSemiBold" FontSize="13" CornerRadius="11" HeightRequest="38" Padding="16,0"
+                                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectDifficultyCommand}"
+                                    CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <Label Text="{Binding CountText}" Margin="22,2,22,0" FontFamily="BarlowSemiBold" FontSize="12"
+                   CharacterSpacing="1" TextColor="{StaticResource TextFaint}" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Results}" Margin="22,4,22,0" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ExerciseRowViewModel">
+                    <Grid Padding="0,10" ColumnDefinitions="46,*,Auto,Auto" ColumnSpacing="14">
+                        <Border Grid.Column="0" WidthRequest="46" HeightRequest="46" StrokeShape="RoundRectangle 10"
+                                Stroke="{StaticResource Line}" StrokeThickness="1">
+                            <c:StripedPlaceholder Label="{Binding Name}" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{Binding Name}" FontFamily="BarlowSemiBold" FontSize="16"
+                                   TextColor="{StaticResource TextPrimary}" />
+                            <Label Text="{Binding Sub}" FontFamily="Barlow" FontSize="12"
+                                   TextColor="{StaticResource TextFaint}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="{Binding DifficultyText}" TextColor="{Binding DifficultyColor}"
+                               FontFamily="BarlowSemiBold" FontSize="12" VerticalOptions="Center" />
+                        <Label Grid.Column="3" Text="&#x203A;" FontSize="22" TextColor="{StaticResource TextFaint}"
+                               VerticalOptions="Center" AutomationProperties.IsInAccessibleTree="False" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.OpenCommand}"
+                                CommandParameter="{Binding}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
