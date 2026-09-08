@@ -114,12 +114,74 @@ public class AchievementEngineTests
         Assert.True(P(new Criteria { Type = "prs_in_single_workout", Count = 3 }));
     }
 
+    // Every criteria Type the catalog references must be one the evaluator actually handles
+    // (the evaluator falls through to `false` for unknown types — this guards against typos).
+    private static readonly HashSet<string> KnownCriteriaTypes = new()
+    {
+        "total_workouts", "streak_days", "perfect_calendar_week", "workouts_in_calendar_month",
+        "weekend_both_days", "comeback_gap_days", "total_reps", "total_reps_in_family", "single_set_reps",
+        "single_hold_seconds", "single_workout_duration_min", "single_workout_duration_max",
+        "cumulative_duration_minutes", "workouts_in_single_day", "workout_start_before_hour",
+        "workout_start_after_hour", "workout_start_between", "distinct_exercises_used",
+        "distinct_muscle_groups_in_week", "custom_plans_created", "predefined_plans_all_completed",
+        "all_modes_completed", "skill_unlocked", "prs_in_single_workout", "effort_ratings_logged",
+    };
+
     [Fact]
     public void Catalog_has_expected_shape()
     {
-        Assert.Equal(54, AchievementCatalog.All.Count);
+        Assert.Equal(69, AchievementCatalog.All.Count);                            // 54 originals + 15 content-driven
         Assert.Equal(3, AchievementCatalog.All.Count(a => a.Hidden));               // secret achievements
         Assert.All(AchievementCatalog.All, a => Assert.Contains(a.Category, AchievementCatalog.Categories));
+
+        var ids = AchievementCatalog.All.Select(a => a.Id).ToList();
+        Assert.Equal(ids.Count, ids.Distinct().Count());                            // unique ids
+        Assert.All(AchievementCatalog.All, a => Assert.Contains(a.Criteria.Type, KnownCriteriaTypes));
+        Assert.All(AchievementCatalog.All, a => Assert.True(a.Points > 0));
+    }
+
+    [Fact]
+    public async Task Every_content_linked_achievement_has_a_data_path()
+    {
+        // Guards the cross-file links: an achievement that targets an exercise / skill / family must
+        // point at content that actually ships, otherwise it could never unlock.
+        var repo = new ExerciseRepository(new FileSeedDataProvider());
+        await repo.InitAsync();
+        var families = repo.All.Select(e => e.Family).Where(f => f != "").ToHashSet();
+
+        foreach (var a in AchievementCatalog.All)
+        {
+            var c = a.Criteria;
+            if (c.ExerciseId != "")
+                Assert.True(repo.Get(c.ExerciseId) is not null, $"{a.Id} targets missing exercise '{c.ExerciseId}'");
+            if (c.Type is "total_reps_in_family" or "single_set_reps" or "single_hold_seconds" && c.Family != "")
+                Assert.True(families.Contains(c.Family), $"{a.Id} targets unused family '{c.Family}'");
+            // Skills may be intentionally dormant (front_lever/planche have no exercise yet); but any skill
+            // that IS mapped must resolve to a real exercise.
+            if (c.Type == "skill_unlocked" && StatsContextBuilder.SkillExercise.TryGetValue(c.SkillId, out var exId))
+                Assert.True(repo.Get(exId) is not null, $"skill '{c.SkillId}' maps to missing exercise '{exId}'");
+        }
+    }
+
+    [Fact]
+    public void Evaluator_supports_per_exercise_set_and_hold_feats()
+    {
+        var s = new StatsContext
+        {
+            BestRepsByExercise = new Dictionary<string, int> { ["onearmpushup"] = 1, ["pistol"] = 5 },
+            BestHoldByExercise = new Dictionary<string, int> { ["deadhang"] = 60, ["lsit"] = 12 },
+        };
+        bool P(Criteria c) => CriteriaEvaluator.Passes(c, s);
+
+        Assert.True(P(new Criteria { Type = "single_set_reps", ExerciseId = "onearmpushup", Count = 1 }));
+        Assert.True(P(new Criteria { Type = "single_set_reps", ExerciseId = "pistol", Count = 5 }));
+        Assert.False(P(new Criteria { Type = "single_set_reps", ExerciseId = "pistol", Count = 6 }));
+        Assert.True(P(new Criteria { Type = "single_hold_seconds", ExerciseId = "deadhang", Seconds = 60 }));
+        Assert.False(P(new Criteria { Type = "single_hold_seconds", ExerciseId = "lsit", Seconds = 15 }));   // only held 12s
+        Assert.False(P(new Criteria { Type = "single_set_reps", ExerciseId = "never_done", Count = 1 }));
+
+        // Progress hint reports current/target for a locked per-exercise feat.
+        Assert.Equal((12, 15), CriteriaEvaluator.Progress(new Criteria { Type = "single_hold_seconds", ExerciseId = "lsit", Seconds = 15 }, s));
     }
 
     // ---------- AchievementService (integration) ----------
@@ -180,7 +242,7 @@ public class AchievementEngineTests
             Assert.Contains("first_plan", svc.PendingCelebrations);
 
             var status = await svc.GetStatusAsync();
-            Assert.Equal(54, status.Count);
+            Assert.Equal(69, status.Count);
             Assert.True(status.Single(s => s.Id == "first_workout").Unlocked);
             Assert.True(status.Single(s => s.Id == "honest_effort").Hidden);
             Assert.False(status.Single(s => s.Id == "workouts_500").Unlocked);

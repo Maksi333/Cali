@@ -15,8 +15,8 @@ public static class CriteriaEvaluator
         "comeback_gap_days" => s.LongestComebackGapDays >= c.Days,
         "total_reps" => s.TotalReps >= c.Count,
         "total_reps_in_family" => s.FamilyReps(c.Family) >= c.Count,
-        "single_set_reps" => s.FamilyBestSet(c.Family) >= c.Count,
-        "single_hold_seconds" => s.FamilyBestHold(c.Family) >= c.Seconds,
+        "single_set_reps" => BestSet(c, s) >= c.Count,
+        "single_hold_seconds" => BestHold(c, s) >= c.Seconds,
         "single_workout_duration_min" => s.LongestWorkoutMin >= c.Minutes,
         "single_workout_duration_max" => s.HadFastWorkout,
         "cumulative_duration_minutes" => s.CumulativeDurationMin >= c.Minutes,
@@ -44,8 +44,8 @@ public static class CriteriaEvaluator
         "comeback_gap_days" => (s.LongestComebackGapDays, c.Days),
         "total_reps" => (s.TotalReps, c.Count),
         "total_reps_in_family" => (s.FamilyReps(c.Family), c.Count),
-        "single_set_reps" => (s.FamilyBestSet(c.Family), c.Count),
-        "single_hold_seconds" => (s.FamilyBestHold(c.Family), c.Seconds),
+        "single_set_reps" => (BestSet(c, s), c.Count),
+        "single_hold_seconds" => (BestHold(c, s), c.Seconds),
         "single_workout_duration_min" => (s.LongestWorkoutMin, c.Minutes),
         "cumulative_duration_minutes" => (s.CumulativeDurationMin, c.Minutes),
         "workouts_in_single_day" => (s.MaxWorkoutsInOneDay, c.Count),
@@ -56,4 +56,10 @@ public static class CriteriaEvaluator
         "effort_ratings_logged" => (s.EffortRatingsLogged, c.Count),
         _ => (Passes(c, s) ? 1 : 0, 1)
     };
+
+    // Set/hold feats can target a specific exercise (ExerciseId) or a whole movement family.
+    private static int BestSet(Criteria c, StatsContext s) =>
+        string.IsNullOrEmpty(c.ExerciseId) ? s.FamilyBestSet(c.Family) : s.ExerciseBestSet(c.ExerciseId);
+    private static int BestHold(Criteria c, StatsContext s) =>
+        string.IsNullOrEmpty(c.ExerciseId) ? s.FamilyBestHold(c.Family) : s.ExerciseBestHold(c.ExerciseId);
 }

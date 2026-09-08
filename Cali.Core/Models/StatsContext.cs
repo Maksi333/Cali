@@ -11,6 +11,8 @@ public sealed class StatsContext
     public IReadOnlyDictionary<string, int> RepsByFamily { get; init; } = new Dictionary<string, int>();
     public IReadOnlyDictionary<string, int> BestSetRepsByFamily { get; init; } = new Dictionary<string, int>();
     public IReadOnlyDictionary<string, int> BestHoldSecondsByFamily { get; init; } = new Dictionary<string, int>();
+    public IReadOnlyDictionary<string, int> BestRepsByExercise { get; init; } = new Dictionary<string, int>();
+    public IReadOnlyDictionary<string, int> BestHoldByExercise { get; init; } = new Dictionary<string, int>();
     public IReadOnlySet<string> DistinctExerciseIds { get; init; } = new HashSet<string>();
     public int CustomPlansCreated { get; init; }
     public bool AllPredefinedCompleted { get; init; }
@@ -33,4 +35,6 @@ public sealed class StatsContext
     public int FamilyReps(string f) => RepsByFamily.TryGetValue(f, out var v) ? v : 0;
     public int FamilyBestSet(string f) => BestSetRepsByFamily.TryGetValue(f, out var v) ? v : 0;
     public int FamilyBestHold(string f) => BestHoldSecondsByFamily.TryGetValue(f, out var v) ? v : 0;
+    public int ExerciseBestSet(string id) => BestRepsByExercise.TryGetValue(id, out var v) ? v : 0;
+    public int ExerciseBestHold(string id) => BestHoldByExercise.TryGetValue(id, out var v) ? v : 0;
 }

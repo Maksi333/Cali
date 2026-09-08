@@ -8,7 +8,8 @@ public static class StatsContextBuilder
     // Skill is "unlocked" when its representative exercise has a PR. (l_sit/front_lever/planche have no exercise.)
     public static readonly IReadOnlyDictionary<string, string> SkillExercise = new Dictionary<string, string>
     {
-        ["pullup"] = "pullup", ["dip"] = "dips", ["pistol_squat"] = "pistol", ["handstand"] = "handstand", ["muscle_up"] = "muscleup"
+        ["pullup"] = "pullup", ["dip"] = "dips", ["pistol_squat"] = "pistol", ["handstand"] = "handstand",
+        ["muscle_up"] = "muscleup", ["l_sit"] = "lsit"
     };
 
     public static StatsContext Build(
@@ -40,11 +41,16 @@ public static class StatsContextBuilder
                 if (!string.IsNullOrEmpty(fam)) repsByFamily[fam] = repsByFamily.GetValueOrDefault(fam) + it.Reps;
             }
 
-        // Best single set / hold per family, from PRs.
+        // Best single set / hold per family (and per exercise), from PRs.
         var bestSet = new Dictionary<string, int>();
         var bestHold = new Dictionary<string, int>();
+        var bestRepsByExercise = new Dictionary<string, int>();
+        var bestHoldByExercise = new Dictionary<string, int>();
         foreach (var pr in prs)
         {
+            if (pr.MaxReps is int mre) bestRepsByExercise[pr.ExerciseId] = Math.Max(bestRepsByExercise.GetValueOrDefault(pr.ExerciseId), mre);
+            if (pr.LongestHoldSec is int lhe) bestHoldByExercise[pr.ExerciseId] = Math.Max(bestHoldByExercise.GetValueOrDefault(pr.ExerciseId), lhe);
+
             var fam = exerciseFamily.TryGetValue(pr.ExerciseId, out var f) ? f : "";
             if (string.IsNullOrEmpty(fam)) continue;
             if (pr.MaxReps is int mr) bestSet[fam] = Math.Max(bestSet.GetValueOrDefault(fam), mr);
@@ -83,6 +89,8 @@ public static class StatsContextBuilder
             RepsByFamily = repsByFamily,
             BestSetRepsByFamily = bestSet,
             BestHoldSecondsByFamily = bestHold,
+            BestRepsByExercise = bestRepsByExercise,
+            BestHoldByExercise = bestHoldByExercise,
             DistinctExerciseIds = distinct,
             CustomPlansCreated = customPlansCreated,
             AllPredefinedCompleted = presetPlanNames.Count > 0 && completedPresets >= presetPlanNames.Count,

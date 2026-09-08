@@ -23,8 +23,9 @@ public static class AchievementCatalog
         new() { Id = id, Name = name, Category = cat, Tier = tier, Points = pts, Emoji = emoji, Description = desc, Criteria = c, Hidden = hidden };
 
     private static Criteria C(string type, int count = 0, int days = 0, string family = "", int seconds = 0,
-        int minutes = 0, int minExercises = 0, int hour = 0, int startHour = 0, int endHour = 0, string skillId = "", string[]? modes = null) =>
-        new() { Type = type, Count = count, Days = days, Family = family, Seconds = seconds, Minutes = minutes, MinExercises = minExercises, Hour = hour, StartHour = startHour, EndHour = endHour, SkillId = skillId, Modes = modes ?? Array.Empty<string>() };
+        int minutes = 0, int minExercises = 0, int hour = 0, int startHour = 0, int endHour = 0, string skillId = "",
+        string[]? modes = null, string exerciseId = "") =>
+        new() { Type = type, Count = count, Days = days, Family = family, Seconds = seconds, Minutes = minutes, MinExercises = minExercises, Hour = hour, StartHour = startHour, EndHour = endHour, SkillId = skillId, Modes = modes ?? Array.Empty<string>(), ExerciseId = exerciseId };
 
     public static readonly IReadOnlyList<Achievement> All = new List<Achievement>
     {
@@ -61,12 +62,26 @@ public static class AchievementCatalog
         A("pullups_2500","Pull Master","volume","gold",50,"🆙","Perform 2,500 lifetime pull-ups.", C("total_reps_in_family",family:"pullup",count:2500)),
         A("squats_1000","Leg Day Loyalist","volume","silver",25,"🦵","Perform 1,000 lifetime squats.", C("total_reps_in_family",family:"squat",count:1000)),
         A("core_1000","Core Conditioning","volume","silver",25,"🌀","Perform 1,000 lifetime core reps.", C("total_reps_in_family",family:"core",count:1000)),
+        A("dips_250","Dip Devotee","volume","silver",25,"🔻","Perform 250 lifetime dips.", C("total_reps_in_family",family:"dip",count:250)),
+        A("dips_2500","Dip Dynamo","volume","gold",50,"🔻","Perform 2,500 lifetime dips.", C("total_reps_in_family",family:"dip",count:2500)),
+        A("squats_5000","Quadzilla","volume","gold",50,"🦿","Perform 5,000 lifetime squats.", C("total_reps_in_family",family:"squat",count:5000)),
+        A("core_5000","Core Colossus","volume","gold",50,"🧨","Perform 5,000 lifetime core reps.", C("total_reps_in_family",family:"core",count:5000)),
 
         // ---- Feats ----
         A("pushups_20_set","Twenty Strong","feats","silver",25,"🎯","Do 20 push-ups in a single set.", C("single_set_reps",family:"pushup",count:20)),
         A("pullups_10_set","Pull-Up Prodigy","feats","gold",50,"🎯","Do 10 pull-ups in a single set.", C("single_set_reps",family:"pullup",count:10)),
         A("squats_50_set","Squat Squad","feats","silver",25,"🎯","Do 50 squats in a single set.", C("single_set_reps",family:"squat",count:50)),
         A("plank_120","Plank Titan","feats","silver",25,"⏲️","Hold a plank for 2 minutes.", C("single_hold_seconds",family:"plank",seconds:120)),
+        A("wallsit_90","Wall Sit Warrior","feats","silver",25,"🪟","Hold a wall sit for 90 seconds.", C("single_hold_seconds",exerciseId:"wallsit",seconds:90)),
+        A("deadhang_60","Iron Grip","feats","silver",25,"✊","Hold a dead hang for 60 seconds.", C("single_hold_seconds",exerciseId:"deadhang",seconds:60)),
+        A("sideplank_60","Oblique Oak","feats","silver",25,"🌳","Hold a side plank for 60 seconds.", C("single_hold_seconds",exerciseId:"sideplank",seconds:60)),
+        A("crow_20","Crow Keeper","feats","silver",25,"🐦","Hold a crow pose for 20 seconds.", C("single_hold_seconds",exerciseId:"crowpose",seconds:20)),
+        A("lsit_15","L-Sit Hold","feats","gold",50,"🪑","Hold an L-sit for 15 seconds.", C("single_hold_seconds",exerciseId:"lsit",seconds:15)),
+        A("hspu_5","Inverted Press","feats","gold",50,"🙃","Do 5 handstand push-ups in a single set.", C("single_set_reps",exerciseId:"hspu",count:5)),
+        A("pistol_5","Pistol Precision","feats","gold",50,"🔫","Do 5 pistol squats on one leg in a single set.", C("single_set_reps",exerciseId:"pistol",count:5)),
+        A("dragonflag_5","Dragon Slayer","feats","gold",50,"🐉","Do 5 dragon flags in a single set.", C("single_set_reps",exerciseId:"dragonflag",count:5)),
+        A("toestobar_10","Toes to the Bar","feats","gold",50,"🦶","Do 10 toes-to-bar in a single set.", C("single_set_reps",exerciseId:"toestobar",count:10)),
+        A("onearm_pushup","One-Arm Wonder","feats","platinum",100,"💪","Do a full one-arm push-up.", C("single_set_reps",exerciseId:"onearmpushup",count:1)),
 
         // ---- Skills ----
         A("skill_pullup","First Pull-Up","skills","silver",25,"🌿","Unlock the pull-up skill.", C("skill_unlocked",skillId:"pullup")),
@@ -82,6 +97,7 @@ public static class AchievementCatalog
         A("first_plan","Architect","explorer","bronze",10,"🧱","Create your first custom plan.", C("custom_plans_created",count:1)),
         A("plans_5","Master Builder","explorer","silver",25,"🏗️","Create 5 custom plans.", C("custom_plans_created",count:5)),
         A("exercises_25","Explorer","explorer","silver",25,"🧭","Perform 25 different exercises.", C("distinct_exercises_used",count:25)),
+        A("exercises_50","Pathfinder","explorer","gold",50,"🗺️","Perform 50 different exercises.", C("distinct_exercises_used",count:50)),
         A("all_predefined","Sampler","explorer","silver",25,"📋","Complete every predefined plan at least once.", C("predefined_plans_all_completed")),
         A("all_modes","Mode Hopper","explorer","gold",50,"🔀","Complete a workout in every mode.", C("all_modes_completed",modes:new[]{"standard","circuit","amrap","emom","tabata"})),
         A("all_muscles_week","Well-Rounded","explorer","silver",25,"🎯","Train all muscle groups within one week.", C("distinct_muscle_groups_in_week",count:7)),

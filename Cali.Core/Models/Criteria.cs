@@ -14,5 +14,7 @@ public sealed class Criteria
     public int StartHour { get; init; }
     public int EndHour { get; init; }
     public string SkillId { get; init; } = "";
+    /// <summary>Target a specific exercise for set/hold feats (takes precedence over <see cref="Family"/> when set).</summary>
+    public string ExerciseId { get; init; } = "";
     public string[] Modes { get; init; } = Array.Empty<string>();
 }

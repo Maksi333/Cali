@@ -10,7 +10,7 @@ public class ModelsTests
         var json = await new FileSeedDataProvider().ReadSeedJsonAsync();
         var seed = SeedData.Parse(json);
 
-        Assert.Equal(19, seed.Exercises.Count);
+        Assert.Equal(90, seed.Exercises.Count);   // 19 originals + 71 content-expansion exercises
         Assert.Equal(6, seed.PredefinedPlans.Count);
         Assert.Empty(seed.SampleHistory);   // BUG-004: no demo data ships in the seed
         Assert.Null(seed.SampleProfile);
@@ -30,12 +30,12 @@ public class ModelsTests
         var plank = seed.Exercises.Single(e => e.Id == "plank").ToExercise();
         Assert.Equal(ExerciseType.Hold, plank.Type);
 
-        // every easier/harder id resolves to a real exercise
+        // every non-blank easier/harder id resolves to a real exercise ("" means no link)
         var ids = seed.Exercises.Select(e => e.Id).ToHashSet();
         foreach (var e in seed.Exercises)
         {
-            Assert.Contains(e.EasierId, ids);
-            Assert.Contains(e.HarderId, ids);
+            if (e.EasierId != "") Assert.Contains(e.EasierId, ids);
+            if (e.HarderId != "") Assert.Contains(e.HarderId, ids);
         }
     }
 }
